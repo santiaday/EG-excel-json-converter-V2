@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import useStyles from "./newRulePageStyles";
-import { Container, Typography, Button, TextField } from "@material-ui/core";
+import { Container, Typography, Button, TextField, MenuItem } from "@material-ui/core";
 import { FilePicker } from "react-file-picker";
 import Dropzone, { useDropzone } from "react-dropzone";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -10,11 +10,16 @@ import { IoArrowDownOutline } from "react-icons/io5";
 import { IoMdAddCircle } from "react-icons/io";
 import cloneDeep from "lodash/cloneDeep";
 import "./newRulePageStyles.css";
-import RuleLineListComponent from "./FormComponents/RuleLineListComponent.jsx";
-import RuleListComponent from "./FormComponents/RuleListComponent";
+import NestedObjectComponent from "./FormComponents/NestedObjectComponent.jsx";
+import ObjectArrayComponent from "./FormComponents/ObjectArrayComponent.jsx"
+import ArrayComponent from "./FormComponents/ArrayComponent.jsx"
+import FieldComponent from "./FormComponents/FieldComponent"
 import RuleUpdateConfirmationPopup from "./RuleUpdateConfirmation/RuleUpdateConfirmationPopup";
+import produce from "immer";
+
 
 const NewRulePage = ({}) => {
+  const ref = React.useRef()
 
   const location = useLocation();
   let ruleNames = location.state.ruleNames
@@ -35,6 +40,8 @@ const NewRulePage = ({}) => {
   const [signShown, setSignShown] = useState(false);
   const [maxRuleList, setMaxRuleList] = useState(false);
   const [maxRuleLineList, setMaxRuleLineList] = useState(false);
+  const [showDropdown , setShowDropDown] = useState(0);
+  const [parentString , setParentString] = useState("")
   const [lineListSignShown, setLineListSignShown] = useState([
     [
       { lineListShown: false },
@@ -86,370 +93,11 @@ const NewRulePage = ({}) => {
     ],
   ]);
   const [newRule, setNewRule] = useState({
-    title: {
-      key: {
-        rule_category: "",
-      },
-      rule_list: [
-        {
-          rule_type: "",
-          rule_description: "",
-          country: "",
-          point_of_sale: "",
-          point_of_supply: "",
-          business_model: "",
-          product: "",
-          sub_product_list: [""],
-          allocation_detail_list: [
-            {
-              allocation_priority: "",
-              allocation_type: "",
-              allocation_factor: "",
-            },
-          ],
-          rule_line_list: [
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-          ],
-        },
-        {
-          rule_type: "",
-          rule_description: "",
-          country: "",
-          point_of_sale: "",
-          point_of_supply: "",
-          business_model: "",
-          product: "",
-          sub_product_list: [""],
-          allocation_detail_list: [
-            {
-              allocation_priority: "",
-              allocation_type: "",
-              allocation_factor: "",
-            },
-          ],
-          rule_line_list: [
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-          ],
-        },
-        {
-          rule_type: "",
-          rule_description: "",
-          country: "",
-          point_of_sale: "",
-          point_of_supply: "",
-          business_model: "",
-          product: "",
-          sub_product_list: [""],
-          allocation_detail_list: [
-            {
-              allocation_priority: "",
-              allocation_type: "",
-              allocation_factor: "",
-            },
-          ],
-          rule_line_list: [
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-          ],
-        },
-        {
-          rule_type: "",
-          rule_description: "",
-          country: "",
-          point_of_sale: "",
-          point_of_supply: "",
-          business_model: "",
-          product: "",
-          sub_product_list: [""],
-          allocation_detail_list: [
-            {
-              allocation_priority: "",
-              allocation_type: "",
-              allocation_factor: "",
-            },
-          ],
-          rule_line_list: [
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-            {
-              monetary_classification_urn: "",
-              localized_display_name: "",
-              compensation_type: "",
-              rule_line_priority: "",
-              sub_product: "",
-            },
-          ],
-        },
-      ],
-    },
+    title: {},
   });
+  const [fields , setFields] = useState([0, 0, 0, 0])
+
+  const [newObjectField , setNewObjectField] = useState("");
 
   const navigate = useNavigate();
 
@@ -1021,7 +669,8 @@ const NewRulePage = ({}) => {
 
   useEffect(() => {
     console.log(newRule)
-  }, [newRule, listCounters, signShown]);
+    console.log(fields)
+  }, [newRule, listCounters, fields]);
 
   const handleGenerateRuleJSON = () => {
     
@@ -1083,6 +732,47 @@ const NewRulePage = ({}) => {
     })
   }
 
+  const handleRuleFieldUpdate = (event,fieldName, level, objectType) => {
+
+      var tempRule = cloneDeep(newRule);
+
+      // tempRule[`${fieldName}`] = tempRule[`${ruleTitle}`];
+      // delete tempRule[`${ruleTitle}`];
+      // setRuleTitle(name);
+      // setTitleEntered(true);
+      // setNewRule(tempRule);
+
+      if(event != null){
+        if (event.key === "Enter") {
+          setNewRule(
+            produce((draft) => {
+              draft[ruleTitle][fieldName] = ""
+            })
+          )
+          }
+      }
+      
+
+  }
+
+  const handleAddField = (fieldType , level) => {
+    level = ((level.substring(0, level.length-2)) / 20) - 1
+    fieldType = fieldType - 1;
+
+    console.log(fieldType);
+    console.log(level);
+
+    var tempFields = cloneDeep(fields);
+
+    tempFields[fieldType] = tempFields[fieldType] + 1
+
+    setFields(tempFields);
+    setShowDropDown(0);
+    setSignShown(0);
+
+
+    }
+
 
 
 
@@ -1124,22 +814,104 @@ const NewRulePage = ({}) => {
           style={{ transform: "translateY(-3px)" }}
           disabled={titleEntered ? true : false}
         />
-        {" {"}
+        {" : {"}
       </Typography>
 
-      {!titleEntered ? (
+      {[...Array(fields[0])].map((e, i) => <NestedObjectComponent inArray={0} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[1])].map((e, i) => <ObjectArrayComponent inArray={0} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[2])].map((e, i) => <ArrayComponent inArray={0} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={0} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[3])].map((e, i) => <FieldComponent inArray={0} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={0} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+
         <>
-          <Typography
+
+        <>
+                {showDropdown ? 
+                <>
+            <TextField
+                ref={ref}
+                onChange={(e) => handleAddField(e.target.value, ref.current.style.marginLeft) }
+                variant="outlined"
+                select
+                size="small"
+                label="Type Of Field"
+                style={{ transform: "translateY(-3px)" , minWidth: "150px", marginLeft: "20px"}}
+              > 
+              <MenuItem value={1}>Object</MenuItem>
+              <MenuItem value={2}>Object Array</MenuItem>
+              <MenuItem value={3}>String Array</MenuItem>
+              <MenuItem value={4}>Field</MenuItem>
+              </TextField>
+            </>
+              
+            :
+
+            <>
+            <IoMdAddCircle
+                      onClick={() => setShowDropDown(1)}
+                      onMouseEnter={handleShowSign}
+                      onMouseLeave={handleShowSign}
+                      style={{
+                        transform: "translateY(2.5px)",
+                        marginLeft: "20px",
+                        marginRight: "10px",
+                        color: "#000099",
+                        cursor: "pointer",
+                      }}
+                    />
+                    {signShown && !showDropdown ? (
+                      <span className="addSign">
+                        Add a new field?
+                      </span>
+                    ) : (
+                      <span className="removeSign">
+                        Add a new field?
+                      </span>
+                    )}
+                    </>
+
+
+            }
+
+            </>
+
+          {/* <Typography
             variant="h6"
             style={{ marginBottom: "10px", marginLeft: "20px" }}
           >
-            "key": {"{"}
+            <TextField
+              value={newRule[(e) => e.target.value]}
+              onKeyPress={(e) =>
+                handleRuleFieldUpdate(
+                  e,
+                  e.target.value,
+                  2,
+                  1
+                )
+              }
+              variant="outlined"
+              size="small"
+              style={{ transform: "translateY(-3px)" }}
+            />
           </Typography>
           <Typography
             variant="h6"
             style={{ marginBottom: "10px", marginLeft: "40px" }}
           >
-            "rule_category":{" "}
+             <TextField
+              value={newRule["spec.props.key2.porps.ruleCategory"]}
+              onChange={(e) =>
+                handleRuleUpdate(
+                  "rule_category",
+                  e.target.value,
+                  0,
+                  3,
+                  ruleTitle + "..key"
+                )
+              }
+              variant="outlined"
+              size="small"
+              style={{ transform: "translateY(-3px)" }}
+            />
             <TextField
               value={newRule["spec.props.key2.porps.ruleCategory"]}
               onChange={(e) =>
@@ -1156,133 +928,14 @@ const NewRulePage = ({}) => {
               style={{ transform: "translateY(-3px)" }}
             />
           </Typography>
-          <Typography
-            variant="h6"
-            style={{ marginBottom: "10px", marginLeft: "40px" }}
-          >
-            "rule_category_event_type":{" "}
-            <TextField
-              value={
-                newRule["spec.properties.key.properties.ruleCategoryEventType"]
-              }
-              onChange={(e) =>
-                handleRuleUpdate(
-                  "rule_category_event_type",
-                  e.target.value,
-                  0,
-                  3,
-                  ruleTitle + "..key"
-                )
-              }
-              variant="outlined"
-              size="small"
-              style={{ transform: "translateY(-3px)" }}
-            />
-          </Typography>
-          <Typography
-            variant="h6"
-            style={{ marginBottom: "10px", marginLeft: "20px" }}
-          >
-            {"}, "}
-          </Typography>
-          <Typography
-            variant="h6"
-            style={{ marginBottom: "10px", marginLeft: "20px" }}
-          >
-            "rule_list": {"[{"}
-          </Typography>
-
-          <RuleListComponent
-            lineListSignShown={lineListSignShown}
-            newRule={newRule}
-            handleRuleUpdate={handleRuleUpdate}
-            ruleTitle={ruleTitle}
-            maxRuleLineList={maxRuleLineList}
-            handleAddRuleLineListObject={handleAddRuleLineListObject}
-            handleShowLineListSign={handleShowLineListSign}
-            listCounters={listCounters}
-            maxRuleList={maxRuleList}
-            handleAddRuleListObject={handleAddRuleListObject}
-            handleShowSign={handleShowSign}
-            signShown={signShown}
-            ruleListIndex={0}
-          />
-
-          {listCounters.rule_list >= 1 ? (
-            <RuleListComponent
-              lineListSignShown={lineListSignShown}
-              newRule={newRule}
-              handleRuleUpdate={handleRuleUpdate}
-              ruleTitle={ruleTitle}
-              maxRuleLineList={maxRuleLineList}
-              handleAddRuleLineListObject={handleAddRuleLineListObject}
-              handleShowLineListSign={handleShowLineListSign}
-              listCounters={listCounters}
-              maxRuleList={maxRuleList}
-              handleAddRuleListObject={handleAddRuleListObject}
-              handleShowSign={handleShowSign}
-              signShown={signShown}
-              ruleListIndex={1}
-            />
-          ) : (
-            <></>
-          )}
-
-          {listCounters.rule_list >= 2 ? (
-            <RuleListComponent
-              lineListSignShown={lineListSignShown}
-              newRule={newRule}
-              handleRuleUpdate={handleRuleUpdate}
-              ruleTitle={ruleTitle}
-              maxRuleLineList={maxRuleLineList}
-              handleAddRuleLineListObject={handleAddRuleLineListObject}
-              handleShowLineListSign={handleShowLineListSign}
-              listCounters={listCounters}
-              maxRuleList={maxRuleList}
-              handleAddRuleListObject={handleAddRuleListObject}
-              handleShowSign={handleShowSign}
-              signShown={signShown}
-              ruleListIndex={2}
-            />
-          ) : (
-            <></>
-          )}
-
-          {listCounters.rule_list >= 3 ? (
-            <RuleListComponent
-              lineListSignShown={lineListSignShown}
-              newRule={newRule}
-              handleRuleUpdate={handleRuleUpdate}
-              ruleTitle={ruleTitle}
-              maxRuleLineList={maxRuleLineList}
-              handleAddRuleLineListObject={handleAddRuleLineListObject}
-              handleShowLineListSign={handleShowLineListSign}
-              listCounters={listCounters}
-              maxRuleList={maxRuleList}
-              handleAddRuleListObject={handleAddRuleListObject}
-              handleShowSign={handleShowSign}
-              signShown={signShown}
-              ruleListIndex={3}
-            />
-          ) : (
-            <></>
-          )}
-
-          <Typography
-            variant="h6"
-            style={{ marginBottom: "10px", marginLeft: "20px" }}
-          >
-            {"}"}
-          </Typography>
-
+          */}
+          <Typography variant="h6" style={{ marginBottom: "10px" }}>
+        {" }"}
+      </Typography> 
           
-
           {ruleUpdatePopup == 1 ? <RuleUpdateConfirmationPopup clean={clean} rules={rules} ruleTitle={ruleTitle} newRule={clean(newRule)} setRuleUpdatePopup={setRuleUpdatePopup} ruleUpdatePopup={1} handleStoreRule={handleStoreRule} ruleNames={ruleNames}  handleDownloadRule={handleDownloadRule}/> : 
           ruleUpdatePopup == 2 ? <RuleUpdateConfirmationPopup clean={clean} ruleNames={ruleNames} setRuleUpdatePopup={setRuleUpdatePopup} ruleUpdatePopup={2} rules={rules} ruleTitle={ruleTitle} newRule={clean(newRule)} handleStoreRule={handleStoreRule} handleDownloadRule={handleDownloadRule}/> : <></>}
         </>
-      ) : (
-        <></>
-      )}
 
       <Typography style={{ fontSize: "30px", marginTop: "20px" }} inline>
       <Button onClick={handleNavigateToManager} className={classes.altButton}>
