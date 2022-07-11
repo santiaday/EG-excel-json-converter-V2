@@ -98,7 +98,7 @@ const ArrayComponent = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList,
       {" ["}
     </Typography>
 
-    {[...Array(fields[0])].map((e, i) => <StringArrayElement marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+    {[...Array(fields[0])].map((e, i) => <StringArrayElement inStringArray={1} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
       
     {showDropdown ? 
                 <>

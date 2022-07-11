@@ -37,6 +37,9 @@ function App() {
   const [rules, setRules] = useState([]);
   const [ruleCount, setRuleCount] = useState([]);
   const [ruleNames , setRuleNames] = useState([]);
+  const [newRule, setNewRule] = useState({
+    title: {},
+  });
   const [rulesLoaded , setRulesLoaded] = useState(false);
 
   String.prototype.replaceAt = function(index, replacement) {
@@ -56,6 +59,12 @@ function App() {
     )
     
   }, [])
+  
+  useEffect(() => {
+    
+    setNewRule(newRule)
+
+}, [newRule])
 
   useEffect(() => {
     ApiService.countRules().then((res) => {setRuleCount(res.data.length) 
@@ -117,7 +126,7 @@ function App() {
                                               multipleFileOutput={multipleFileOutput} setMultipleFileOutput={setMultipleFileOutput} 
                                               files={files} firstRender={firstRender} setFirstRender={setFirstRender}/>} />
             <Route path="/generator" element={<Generator ruleCount={ruleCount} ruleNames={ruleNames} rules={rules} rulesLoaded={rulesLoaded}/>} />
-            <Route path="/generator/generate-rule" element={<NewRulePage />} />
+            <Route path="/generator/generate-rule" element={<NewRulePage newRule={newRule} setNewRule={setNewRule}/>} />
           </Routes>
         </BrowserRouter>
       

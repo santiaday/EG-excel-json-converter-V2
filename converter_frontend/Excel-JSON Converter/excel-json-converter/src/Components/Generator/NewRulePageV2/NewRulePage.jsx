@@ -18,7 +18,7 @@ import RuleUpdateConfirmationPopup from "./RuleUpdateConfirmation/RuleUpdateConf
 import produce from "immer";
 
 
-const NewRulePage = ({}) => {
+const NewRulePage = ({ newRule , setNewRule}) => {
   const ref = React.useRef()
 
   const location = useLocation();
@@ -41,7 +41,9 @@ const NewRulePage = ({}) => {
   const [maxRuleList, setMaxRuleList] = useState(false);
   const [maxRuleLineList, setMaxRuleLineList] = useState(false);
   const [showDropdown , setShowDropDown] = useState(0);
-  const [parentString , setParentString] = useState("")
+  const [paths , setPaths] = useState([])
+  const [pathArrayIndex , setPathArrayIndex] = useState(0)
+  const [useFunction , setUseFunction] = useState(false)
   const [lineListSignShown, setLineListSignShown] = useState([
     [
       { lineListShown: false },
@@ -92,14 +94,34 @@ const NewRulePage = ({}) => {
       { lineListShown: false },
     ],
   ]);
-  const [newRule, setNewRule] = useState({
-    title: {},
-  });
+  
   const [fields , setFields] = useState([0, 0, 0, 0])
 
   const [newObjectField , setNewObjectField] = useState("");
 
   const navigate = useNavigate();
+  let tempRule;
+
+
+  useEffect(() => {
+    console.log(newRule)
+    setNewRule(newRule)
+  }, [newRule])
+
+  useEffect(() => {
+    tempRule = cloneDeep(newRule)
+    if(useFunction){
+      console.log(tempRule)
+      setNewRule(tempRule)
+      handleGenerateRuleJSON(tempRule)
+    }
+    
+  }, [useFunction, newRule])
+
+  useEffect(() => {
+    console.log(paths)
+    console.log(pathArrayIndex)
+  }, [paths , pathArrayIndex])
 
   const clearNewRule = () => {
     window.location.reload()
@@ -134,7 +156,6 @@ const NewRulePage = ({}) => {
         if (Array.isArray(object)) {
           object.splice(k);
         } else {
-          console.log(object[k])
           delete object[k];
         }
       }
@@ -669,10 +690,14 @@ const NewRulePage = ({}) => {
 
   useEffect(() => {
     console.log(newRule)
+    setNewRule(newRule)
     console.log(fields)
   }, [newRule, listCounters, fields]);
 
-  const handleGenerateRuleJSON = () => {
+  const handleGenerateRuleJSON = (rule) => {
+
+    console.log(rule)
+    console.log(JSON.stringify(rule))
     
 
       if(ruleNames.indexOf(ruleTitle + ".json") > -1){
@@ -686,7 +711,7 @@ const NewRulePage = ({}) => {
 
   const handleStoreRule = () => {
     const url = window.URL.createObjectURL(
-      new Blob([JSON.stringify(clean(newRule))])
+      new Blob([JSON.stringify((newRule))])
     );
     const link = document.createElement("a");
     link.href = url;
@@ -698,7 +723,7 @@ const NewRulePage = ({}) => {
     link.click();
 
     const formData = new FormData();
-    const rule = new Blob([JSON.stringify(clean(newRule))]);
+    const rule = new Blob([JSON.stringify((newRule))]);
 
           formData.append("rule", rule);
           formData.append("ruleName", ruleTitle);
@@ -713,7 +738,7 @@ const NewRulePage = ({}) => {
 
   const handleDownloadRule = () => {
     const url = window.URL.createObjectURL(
-      new Blob([JSON.stringify(clean(newRule))])
+      new Blob([JSON.stringify((newRule))])
     );
     const link = document.createElement("a");
     link.href = url;
@@ -761,6 +786,14 @@ const NewRulePage = ({}) => {
 
     console.log(fieldType);
     console.log(level);
+
+    let tempPathIndex = pathArrayIndex
+    tempPathIndex++;
+    setPathArrayIndex(tempPathIndex)
+    
+    let tempPaths = cloneDeep(paths)
+    paths.push("")
+    setPaths(tempPaths)
 
     var tempFields = cloneDeep(fields);
 
@@ -817,10 +850,10 @@ const NewRulePage = ({}) => {
         {" : {"}
       </Typography>
 
-      {[...Array(fields[0])].map((e, i) => <NestedObjectComponent inArray={0} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[1])].map((e, i) => <ObjectArrayComponent inArray={0} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[2])].map((e, i) => <ArrayComponent inArray={0} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={0} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[3])].map((e, i) => <FieldComponent inArray={0} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={0} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[0])].map((e, i) => <NestedObjectComponent paths={paths} parentString={paths[pathArrayIndex]} pathArrayIndex={pathArrayIndex} inArray={0} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[1])].map((e, i) => <ObjectArrayComponent paths={paths} parentString={paths[pathArrayIndex]} pathArrayIndex={pathArrayIndex} inArray={0} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[2])].map((e, i) => <ArrayComponent paths={paths} inArray={0} parentString={paths[pathArrayIndex]} newRule={newRule} marginLeft={0} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[3])].map((e, i) => <FieldComponent paths={paths} inArray={0} parentString={paths[pathArrayIndex]} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
 
         <>
 
@@ -874,61 +907,7 @@ const NewRulePage = ({}) => {
 
             </>
 
-          {/* <Typography
-            variant="h6"
-            style={{ marginBottom: "10px", marginLeft: "20px" }}
-          >
-            <TextField
-              value={newRule[(e) => e.target.value]}
-              onKeyPress={(e) =>
-                handleRuleFieldUpdate(
-                  e,
-                  e.target.value,
-                  2,
-                  1
-                )
-              }
-              variant="outlined"
-              size="small"
-              style={{ transform: "translateY(-3px)" }}
-            />
-          </Typography>
-          <Typography
-            variant="h6"
-            style={{ marginBottom: "10px", marginLeft: "40px" }}
-          >
-             <TextField
-              value={newRule["spec.props.key2.porps.ruleCategory"]}
-              onChange={(e) =>
-                handleRuleUpdate(
-                  "rule_category",
-                  e.target.value,
-                  0,
-                  3,
-                  ruleTitle + "..key"
-                )
-              }
-              variant="outlined"
-              size="small"
-              style={{ transform: "translateY(-3px)" }}
-            />
-            <TextField
-              value={newRule["spec.props.key2.porps.ruleCategory"]}
-              onChange={(e) =>
-                handleRuleUpdate(
-                  "rule_category",
-                  e.target.value,
-                  0,
-                  3,
-                  ruleTitle + "..key"
-                )
-              }
-              variant="outlined"
-              size="small"
-              style={{ transform: "translateY(-3px)" }}
-            />
-          </Typography>
-          */}
+          
           <Typography variant="h6" style={{ marginBottom: "10px" }}>
         {" }"}
       </Typography> 
@@ -944,7 +923,7 @@ const NewRulePage = ({}) => {
             {titleEntered ?  <><Button onClick={() => {clearNewRule()}} className={classes.redButton}>
               <div style={{ transform: "translateY(2px)" }}>Reset</div>
             </Button>
-            <Button onClick={handleGenerateRuleJSON} className={classes.button}>
+            <Button onClick={() => setUseFunction(true)} className={classes.button}>
               <div style={{ transform: "translateY(2px)" }}>Generate</div>
             </Button></>: <></>}
             

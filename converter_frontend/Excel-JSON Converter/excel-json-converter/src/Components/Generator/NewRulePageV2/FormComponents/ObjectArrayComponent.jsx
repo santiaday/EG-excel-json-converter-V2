@@ -16,15 +16,20 @@ import FieldComponent from "./FieldComponent"
 
 
 const ObjectArrayComponent = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, handleAddRuleLineListObject, 
-                                  handleShowLineListSign, lineListSignShown, ruleLineListIndex, ruleListIndex, listCounters, marginLeft, setNewRule, parentString, setParentString}) => {
+                                  handleShowLineListSign, lineListSignShown, ruleLineListIndex, ruleListIndex, listCounters, marginLeft, setNewRule, parentString, setParentString, inArray}) => {
 
 
   const ref = useRef()
   const [signShown, setSignShown] = useState(false);
   const [showDropdown , setShowDropDown] = useState(0);
   const [entered , setEntered] = useState(false);
+  const [parents, setParents] = useState(parentString)
+  let tempString = parentString;
+  const [thisFieldName, setThisFieldName] = useState("")
   
   const [fields , setFields] = useState([0, 0, 0, 0])
+
+  
 
   const handleShowSign = () => {
     if (signShown) {
@@ -52,104 +57,236 @@ const ObjectArrayComponent = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLin
       // setTitleEntered(true);
       // setNewRule(tempRule);
 
-      console.log(level)
 
       
 
       if(event != null){
         if (event.key === "Enter") {
-          setParentString(parentString  + ".." + fieldName)
-          var parentChain = parentString.split("..")
-          console.log(parentChain)
+          setThisFieldName(fieldName)
+
+          tempString = tempString + ".." + fieldName
+          setParents(tempString)
+
+            var parentChain = tempString.split("..")
+          
 
           if(level == 1){
+
+            if(inArray){
+              let tempNewRule = {...newRule}
+
+              tempNewRule[Object.keys(newRule)[0]][fieldName] = []
+
+                  setNewRule(tempNewRule)
+                
+            }
+
+            if(!inArray){
+              setNewRule(
+                produce((draft) => {
+                  draft[Object.keys(newRule)[0]] = {...draft[Object.keys(newRule)[0]] , [fieldName]: []}
+                })
+              )
+            }
             
-            setNewRule(
-              produce((draft) => {
-                draft[Object.keys(newRule)[0]] = {...draft[Object.keys(newRule)[0]] , [fieldName]: []}
-              })
-            )
+            
           }
 
           if(level == 2){
+
+            if(inArray){
+              let tempNewRule = cloneDeep(newRule)
+
+              tempNewRule[Object.keys(newRule)[0]][parentChain[1]][fieldName] = []
+
+                  setNewRule(tempNewRule)
+                
+            }
             
-            setNewRule(
+            if(!inArray)
+            {
+              setNewRule(
               produce((draft) => {
                 draft[Object.keys(newRule)[0]][parentChain[1]] = {...draft[Object.keys(newRule)[0]][parentChain[1]] , [fieldName]: []}
               })
-            )
+            )}
           }
 
           if(level == 3){
+
+            if(inArray){
+              let tempRule = {...newRule}
+
+              tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][fieldName] = []
+
+                  setNewRule(tempRule)
+                
+            }
             
+            if(!inArray)
+            {
             setNewRule(
               produce((draft) => {
                 draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]] , [fieldName]: []}
               })
             )
+            }
           }
 
           if(level == 4){
-            
-            setNewRule(
-              produce((draft) => {
-                draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] , [fieldName]: []}
-              })
-            )
+
+            if(inArray){
+              let tempRule = {...newRule}
+
+              tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][fieldName] = []
+
+                  setNewRule(tempRule)
+                
+            }
+
+            if(!inArray)
+            {
+
+              setNewRule(
+                produce((draft) => {
+                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] , [fieldName]: []}
+                })
+              )
+            }
           }
 
           if(level == 5){
+
+            console.log("GOT HERE " + level + inArray)
+
+            if(inArray){
+              let tempNewRule = {...newRule}
+
+              tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][fieldName] = []
+
+                  setNewRule(tempNewRule)
+                
+            }
             
+            if(!inArray)
+            {
             setNewRule(
               produce((draft) => {
                 draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] , [fieldName]: []}
               })
             )
+            }
           }
 
           if(level == 6){
+
+            if(inArray){
+              let tempNewRule = {...newRule}
+
+              tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][fieldName] = []
+
+              setNewRule(tempNewRule)
+                
+            }
+
+            if(!inArray)
+            {
             
-            setNewRule(
-              produce((draft) => {
-                draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] , [fieldName]: []}
-              })
-            )
+              setNewRule(
+                produce((draft) => {
+                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] , [fieldName]: []}
+                })
+              )
+            }
           }
 
           if(level == 7){
             
-            setNewRule(
-              produce((draft) => {
-                draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] , [fieldName]: []}
-              })
-            )
+            if(inArray){
+              let tempNewRule = {...newRule}
+
+              tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][fieldName] = []
+
+              setNewRule(tempNewRule)
+                
+            }
+
+            if(!inArray)
+            {
+            
+              setNewRule(
+                produce((draft) => {
+                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] , [fieldName]: []}
+                })
+              )
+            }
+
           }
 
           if(level == 8){
             
-            setNewRule(
-              produce((draft) => {
-                draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] , [fieldName]: []}
-              })
-            )
+            if(inArray){
+              let tempNewRule = {...newRule}
+
+              tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][fieldName] = []
+
+              setNewRule(tempNewRule)
+                
+            }
+
+            if(!inArray)
+            {
+            
+              setNewRule(
+                produce((draft) => {
+                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] , [fieldName]: []}
+                })
+              )
+            }
           }
 
           if(level == 9){
             
-            setNewRule(
-              produce((draft) => {
-                draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] , [fieldName]: []}
-              })
-            )
+            if(inArray){
+              let tempNewRule = {...newRule}
+
+              tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][fieldName] = []
+
+              setNewRule(tempNewRule)
+                
+            }
+
+            if(!inArray)
+            {
+            
+              setNewRule(
+                produce((draft) => {
+                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] , [fieldName]: []}
+                })
+              )
+            }
           }
 
           if(level == 10){
             
-            setNewRule(
-              produce((draft) => {
-                draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] , [fieldName]: []}
-              })
-            )
+            if(inArray){
+              let tempNewRule = {...newRule}
+
+              tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][fieldName] = []
+
+              setNewRule(tempNewRule)
+                
+            }
+
+            if(!inArray)
+            {
+            
+              setNewRule(
+                produce((draft) => {
+                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] , [fieldName]: []}
+                })
+              )
+            }
           }
           
           setEntered(true)
@@ -196,10 +333,10 @@ const ObjectArrayComponent = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLin
       {" : ["}
     </Typography>
 
-    {[...Array(fields[0])].map((e, i) => <NestedObjectComponent inArray={1} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[1])].map((e, i) => <ObjectArrayComponent inArray={1} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[2])].map((e, i) => <ArrayComponent inArray={1} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[3])].map((e, i) => <FieldComponent inArray={1} parentString={parentString} setParentString={setParentString} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+    {[...Array(fields[0])].map((e, i) => <NestedObjectComponent inArray={1} parentString={tempString + ".." + thisFieldName} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[1])].map((e, i) => <ObjectArrayComponent inArray={1} parentString={tempString + ".." + thisFieldName} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[2])].map((e, i) => <ArrayComponent inArray={1} parentString={tempString + ".." + thisFieldName} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[3])].map((e, i) => <FieldComponent inArray={1} parentString={tempString + ".." + thisFieldName}  newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
 
     {showDropdown && entered ? 
                 <>
