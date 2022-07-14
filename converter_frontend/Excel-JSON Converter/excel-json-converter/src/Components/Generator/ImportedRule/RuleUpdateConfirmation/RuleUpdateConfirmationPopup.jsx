@@ -137,7 +137,7 @@ rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup
             <span style={{ transform: "translateY(2px)" }}>Yes</span>
           </Button>
           <Button className={classes.altButton} onClick={() => {handleNavigateToNewRule();
-                                                                handleDownloadRule(newRule);}}>
+                                                                handleDownloadRule();}}>
             <span style={{ transform: "translateY(2px)" }}>No</span>
           </Button>
           </>

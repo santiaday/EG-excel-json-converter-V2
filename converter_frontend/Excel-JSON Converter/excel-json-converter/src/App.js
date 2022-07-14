@@ -6,7 +6,7 @@ import { createTheme, ThemeProvider } from '@material-ui/core'
 import Body from './Components/Body/Body';
 import Settings from './Components/Settings/Settings';
 import Generator from './Components/Generator/Generator';
-// import NewRulePage from './Components/Generator/NewRulePage/NewRulePage'
+ import ImportedRulePage from './Components/Generator/ImportedRule/ImportedRulePage'
 import NewRulePage from './Components/Generator/NewRulePageV2/NewRulePage'
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import ApiService from "./http-common";
@@ -37,6 +37,8 @@ function App() {
   const [rules, setRules] = useState([]);
   const [ruleCount, setRuleCount] = useState([]);
   const [ruleNames , setRuleNames] = useState([]);
+  const [counter , setCounter] = useState(0)
+  const [ruleSignal , setRuleSignal] = useState(false);
   const [newRule, setNewRule] = useState({
     title: {},
   });
@@ -127,6 +129,7 @@ function App() {
                                               files={files} firstRender={firstRender} setFirstRender={setFirstRender}/>} />
             <Route path="/generator" element={<Generator ruleCount={ruleCount} ruleNames={ruleNames} rules={rules} rulesLoaded={rulesLoaded}/>} />
             <Route path="/generator/generate-rule" element={<NewRulePage newRule={newRule} setNewRule={setNewRule}/>} />
+            <Route path="/generator/generate-rule/imported" element={<ImportedRulePage rules={rules} newRule={newRule} setNewRule={setNewRule} counter={counter} setCounter={setCounter} ruleSignal={ruleSignal} setRuleSignal={setRuleSignal}/>} />
           </Routes>
         </BrowserRouter>
       

@@ -1,0 +1,96 @@
+      <Typography
+        variant="h6"
+        style={{ marginBottom: "10px", marginLeft: "20px" }}
+      >
+        "$schema":{" "}
+        <TextField
+          value={newRule["spec.$schema"]}
+          onChange={(e) =>
+            handleRuleUpdate("$schema", e.target.value, 0, 2, "spec")
+          }
+          variant="outlined"
+          size="small"
+          style={{ transform: "translateY(-3px)" }}
+        />
+      </Typography>
+      <Typography
+        variant="h6"
+        style={{ marginBottom: "10px", marginLeft: "20px" }}
+      >
+        "title":{" "}
+        <TextField
+          value={newRule["spec.title"]}
+          onChange={(e) =>
+            handleRuleUpdate("title", e.target.value, 0, 2, "spec")
+          }
+          variant="outlined"
+          size="small"
+          style={{ transform: "translateY(-3px)" }}
+        />
+      </Typography>
+      <Typography
+        variant="h6"
+        style={{ marginBottom: "10px", marginLeft: "20px" }}
+      >
+        "description"{" "}
+        <TextField
+          value={newRule["spec.description"]}
+          onChange={(e) =>
+            handleRuleUpdate("description", e.target.value, 0, 2, "spec")
+          }
+          variant="outlined"
+          size="small"
+          style={{ transform: "translateY(-3px)" }}
+        />
+      </Typography>
+      <Typography
+        variant="h6"
+        style={{ marginBottom: "10px", marginLeft: "20px" }}
+      >
+        "key_spec":{" "}
+        <TextField
+          value={newRule["spec.key_spec"]}
+          onChange={(e) =>
+            handleRuleUpdate("key_spec", e.target.value, 1, 2, "spec")
+          }
+          variant="outlined"
+          size="small"
+          style={{ transform: "translateY(-3px)" }}
+        />
+      </Typography>
+      <Typography
+        variant="h6"
+        style={{ marginBottom: "10px", marginLeft: "20px" }}
+      >
+        "type":{" "}
+        <TextField
+          value={newRule["spec.type"]}
+          onChange={(e) =>
+            handleRuleUpdate("type", e.target.value, 0, 2, "spec")
+          }
+          variant="outlined"
+          size="small"
+          style={{ transform: "translateY(-3px)" }}
+        />
+      </Typography>
+      <Typography
+        variant="h6"
+        style={{ marginBottom: "10px", marginLeft: "20px" }}
+      >
+        "additionalProperties":{" "}
+        <TextField
+          value={newRule["spec.additionalProperties"]}
+          onChange={(e) =>
+            handleRuleUpdate(
+              "additionalProperties",
+              e.target.value,
+              0,
+              2,
+              "spec"
+            )
+          }
+          variant="outlined"
+          size="small"
+          style={{ transform: "translateY(-3px)" }}
+        />
+      </Typography>

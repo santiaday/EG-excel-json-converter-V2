@@ -12,9 +12,10 @@ import cloneDeep from "lodash/cloneDeep";
 import "./newRulePageStyles.css";
 import NestedObjectComponent from "./FormComponents/NestedObjectComponent.jsx";
 import ObjectArrayComponent from "./FormComponents/ObjectArrayComponent.jsx"
-import ArrayComponent from "./FormComponents/ArrayComponent.jsx"
+import StringArrayElement from "./FormComponents/StringArrayElement.jsx"
 import FieldComponent from "./FormComponents/FieldComponent"
 import RuleUpdateConfirmationPopup from "./RuleUpdateConfirmation/RuleUpdateConfirmationPopup";
+import FileUploadPopup from "./FileUploadPopup/FileUploadPopup.jsx"
 import produce from "immer";
 
 
@@ -44,6 +45,7 @@ const NewRulePage = ({ newRule , setNewRule}) => {
   const [paths , setPaths] = useState([])
   const [pathArrayIndex , setPathArrayIndex] = useState(0)
   const [useFunction , setUseFunction] = useState(false)
+  const [tempRule , setTempRule] = useState();
   const [lineListSignShown, setLineListSignShown] = useState([
     [
       { lineListShown: false },
@@ -98,23 +100,20 @@ const NewRulePage = ({ newRule , setNewRule}) => {
   const [fields , setFields] = useState([0, 0, 0, 0])
 
   const [newObjectField , setNewObjectField] = useState("");
+  const [fileUploadPopup , setFileUploadPopup] = useState(0)
 
   const navigate = useNavigate();
-  let tempRule;
 
 
   useEffect(() => {
     console.log(newRule)
-    setNewRule(newRule)
-  }, [newRule])
+    if(useFunction){
+      handleGenerateRuleJSON(newRule)
+    }
+    
+  }, [newRule, useFunction])
 
   useEffect(() => {
-    tempRule = cloneDeep(newRule)
-    if(useFunction){
-      console.log(tempRule)
-      setNewRule(tempRule)
-      handleGenerateRuleJSON(tempRule)
-    }
     
   }, [useFunction, newRule])
 
@@ -164,468 +163,6 @@ const NewRulePage = ({ newRule , setNewRule}) => {
     return object;
   }
 
-  const handleRuleUpdate = (
-    value,
-    targetValue,
-    isArray,
-    level,
-    parentChain,
-    inArrayOfObjects,
-    ruleListIndex,
-    ruleLineListIndex,
-    allocationArray
-  ) => {
-    if (level == 1) {
-      if (!isArray) {
-        setNewRule({ ...newRule, [value]: targetValue });
-      } else {
-        var targetValueArray = targetValue.split(",");
-        setNewRule({ ...newRule, [value]: targetValueArray });
-      }
-    }
-    if (level == 2) {
-      if (!isArray) {
-        setNewRule({
-          ...newRule,
-          [parentChain]: { ...newRule[`${parentChain}`], [value]: targetValue },
-        });
-      } else {
-        var targetValueArray = targetValue.split(",");
-        setNewRule({
-          ...newRule,
-          [parentChain]: {
-            ...newRule[`${parentChain}`],
-            [value]: targetValueArray,
-          },
-        });
-      }
-    }
-    if (level == 3) {
-      var parents = parentChain.split("..");
-
-      if (inArrayOfObjects) {
-        var tempRule = cloneDeep(newRule);
-        if (!isArray) {
-          tempRule[`${parents[0]}`][`${parents[1]}`][ruleListIndex][
-            value
-          ] = targetValue;
-        } else {
-          var targetValueArray = targetValue.split(",");
-          tempRule[`${parents[0]}`][`${parents[1]}`][ruleListIndex][
-            value
-          ] = targetValueArray;
-        }
-
-        setNewRule(tempRule);
-      }
-
-      if (!isArray && !inArrayOfObjects) {
-        setNewRule({
-          ...newRule,
-          [parents[0]]: {
-            ...newRule[`${parents[0]}`],
-            [parents[1]]: checkNested(newRule, parents[0], parents[1])
-              ? {
-                  ...newRule[`${parents[0]}`][`${parents[1]}`],
-                  [value]: targetValue,
-                }
-              : {
-                  [value]: targetValue,
-                },
-          },
-        });
-      } else if (!inArrayOfObjects) {
-        var targetValueArray = targetValue.split(",");
-        setNewRule({
-          ...newRule,
-          [parents[0]]: {
-            ...newRule[`${parents[0]}`],
-            [parents[1]]: checkNested(newRule, parents[0], parents[1])
-              ? {
-                  ...newRule[`${parents[0]}`][`${parents[1]}`],
-                  [value]: targetValueArray,
-                }
-              : {
-                  [value]: targetValueArray,
-                },
-          },
-        });
-      }
-    }
-    if (level == 4) {
-      var parents = parentChain.split("..");
-
-      if (inArrayOfObjects && allocationArray) {
-        var tempRule = cloneDeep(newRule);
-        if (!isArray) {
-          tempRule[`${parents[0]}`][`${parents[1]}`][ruleListIndex][
-            `${parents[2]}`
-          ][0][value] = targetValue;
-        } else {
-          var targetValueArray = targetValue.split(",");
-          tempRule[`${parents[0]}`][`${parents[1]}`][ruleListIndex][
-            `${parents[2]}`
-          ][0][value] = targetValueArray;
-        }
-
-        setNewRule(tempRule);
-      }
-
-      if (inArrayOfObjects && !allocationArray) {
-        var tempRule = cloneDeep(newRule);
-        if (!isArray) {
-          tempRule[`${parents[0]}`][`${parents[1]}`][ruleListIndex][
-            `${parents[2]}`
-          ][ruleLineListIndex][value] = targetValue;
-        } else {
-          var targetValueArray = targetValue.split(",");
-          tempRule[`${parents[0]}`][`${parents[1]}`][ruleListIndex][
-            `${parents[2]}`
-          ][ruleLineListIndex][value] = targetValueArray;
-        }
-
-        setNewRule(tempRule);
-      }
-
-      if (!isArray && !inArrayOfObjects) {
-        setNewRule({
-          ...newRule,
-          [parents[0]]: {
-            ...newRule[`${parents[0]}`],
-            [parents[1]]: checkNested(newRule, parents[0], parents[1])
-              ? {
-                  ...newRule[`${parents[0]}`][`${parents[1]}`],
-                  [parents[2]]: checkNested(
-                    newRule,
-                    parents[0],
-                    parents[1],
-                    parents[2]
-                  )
-                    ? !inArrayOfObjects
-                      ? //NOT IN ARRAY, NEST DOES EXIST
-                        {
-                          ...newRule[`${parents[0]}`][`${parents[1]}`][
-                            `${parents[2]}`
-                          ],
-                          rule_list: [{ ["hey"]: "targetValue" }],
-                        }
-                      : //INSIDE ARRAY, NEST DOES EXIST SECOND CALL
-                        {
-                          ...newRule[`${parents[0]}`][`${parents[1]}`][
-                            `${parents[2]}`
-                          ][0][value],
-                          [value]: targetValue,
-                        }
-                    : !inArrayOfObjects
-                    ? //NOT IN ARRAY, NEST DOES NOT EXIST
-                      {
-                        [`${parents[2]}`]: [
-                          ...newRule[`${parents[0]}`][`${parents[1]}`][
-                            `${parents[2]}`
-                          ],
-                          { ["hy"]: targetValue },
-                        ],
-                      }
-                    : //IN ARRAY, NEST DOES NOT EXIST
-                      {},
-                }
-              : {
-                  [parents[2]]: checkNested(
-                    newRule,
-                    parents[0],
-                    parents[1],
-                    parents[2]
-                  )
-                    ? {
-                        ...newRule[`${parents[0]}`][`${parents[1]}`][
-                          `${parents[2]}`
-                        ],
-                        hey: targetValue,
-                      }
-                    : //FIRST CALL
-                      {
-                        hey: targetValue,
-                      },
-                },
-          },
-        });
-      } else if (!inArrayOfObjects) {
-        var targetValueArray = targetValue.split(",");
-        setNewRule({
-          ...newRule,
-          [parents[0]]: {
-            ...newRule[`${parents[0]}`],
-            [parents[1]]: checkNested(newRule, parents[0], parents[1])
-              ? {
-                  ...newRule[`${parents[0]}`][`${parents[1]}`],
-                  [parents[2]]: checkNested(
-                    newRule,
-                    parents[0],
-                    parents[1],
-                    parents[2]
-                  )
-                    ? {
-                        ...newRule[`${parents[0]}`][`${parents[1]}`][
-                          `${parents[2]}`
-                        ],
-                        [value]: targetValueArray,
-                      }
-                    : {
-                        [value]: targetValueArray,
-                      },
-                }
-              : {
-                  [parents[2]]: checkNested(
-                    newRule,
-                    parents[0],
-                    parents[1],
-                    parents[2]
-                  )
-                    ? {
-                        ...newRule[`${parents[0]}`][`${parents[1]}`][
-                          `${parents[2]}`
-                        ],
-                        [value]: targetValueArray,
-                      }
-                    : {
-                        [value]: targetValueArray,
-                      },
-                },
-          },
-        });
-      }
-    }
-    if (level == 5) {
-      var parents = parentChain.split("..");
-
-      if (inArrayOfObjects) {
-        var tempRule = cloneDeep(newRule);
-        if (!isArray) {
-          tempRule[`${parents[0]}`][`${parents[1]}`][`${parents[2]}`][
-            ruleListIndex
-          ][`${parents[3]}`][ruleLineListIndex][value] = targetValue;
-          console.log(tempRule);
-        } else {
-          var targetValueArray = targetValue.split(",");
-          tempRule[`${parents[0]}`][`${parents[1]}`][`${parents[2]}`][
-            ruleListIndex
-          ][`${parents[3]}`][ruleLineListIndex][value] = targetValueArray;
-        }
-
-        setNewRule(tempRule);
-      }
-
-      if (!isArray && !inArrayOfObjects) {
-        setNewRule({
-          ...newRule,
-          [parents[0]]: {
-            ...newRule[`${parents[0]}`],
-            [parents[1]]: checkNested(newRule, parents[0], parents[1])
-              ? {
-                  ...newRule[`${parents[0]}`][`${parents[1]}`],
-                  [parents[2]]: checkNested(
-                    newRule,
-                    parents[0],
-                    parents[1],
-                    parents[2]
-                  )
-                    ? {
-                        ...newRule[`${parents[0]}`][`${parents[1]}`][
-                          `${parents[2]}`
-                        ],
-                        [parents[3]]: checkNested(
-                          newRule,
-                          parents[0],
-                          parents[1],
-                          parents[2],
-                          parents[3]
-                        )
-                          ? {
-                              ...newRule[`${parents[0]}`][`${parents[1]}`][
-                                `${parents[2]}`
-                              ][`${parents[3]}`],
-                              [value]: targetValue,
-                            }
-                          : {
-                              [value]: targetValue,
-                            },
-                      }
-                    : {
-                        [parents[3]]: checkNested(
-                          newRule,
-                          parents[0],
-                          parents[1],
-                          parents[2],
-                          parents[3]
-                        )
-                          ? {
-                              ...newRule[`${parents[0]}`][`${parents[1]}`][
-                                `${parents[2]}`
-                              ][`${parents[3]}`],
-                              [value]: targetValue,
-                            }
-                          : {
-                              [value]: targetValue,
-                            },
-                      },
-                }
-              : {
-                  [parents[2]]: checkNested(
-                    newRule,
-                    parents[0],
-                    parents[1],
-                    parents[2]
-                  )
-                    ? {
-                        ...newRule[`${parents[0]}`][`${parents[1]}`][
-                          `${parents[2]}`
-                        ],
-                        [parents[3]]: checkNested(
-                          newRule,
-                          parents[0],
-                          parents[1],
-                          parents[2],
-                          parents[3]
-                        )
-                          ? {
-                              ...newRule[`${parents[0]}`][`${parents[1]}`][
-                                `${parents[2]}`
-                              ][`${parents[3]}`],
-                              [value]: targetValue,
-                            }
-                          : {
-                              [value]: targetValue,
-                            },
-                      }
-                    : {
-                        [parents[3]]: checkNested(
-                          newRule,
-                          parents[0],
-                          parents[1],
-                          parents[2],
-                          parents[3]
-                        )
-                          ? {
-                              ...newRule[`${parents[0]}`][`${parents[1]}`][
-                                `${parents[2]}`
-                              ][`${parents[3]}`],
-                              [value]: targetValue,
-                            }
-                          : {
-                              [value]: targetValue,
-                            },
-                      },
-                },
-          },
-        });
-      } else if (!inArrayOfObjects) {
-        var targetValueArray = targetValue.split(",");
-        setNewRule({
-          ...newRule,
-          [parents[0]]: {
-            ...newRule[`${parents[0]}`],
-            [parents[1]]: checkNested(newRule, parents[0], parents[1])
-              ? {
-                  ...newRule[`${parents[0]}`][`${parents[1]}`],
-                  [parents[2]]: checkNested(
-                    newRule,
-                    parents[0],
-                    parents[1],
-                    parents[2]
-                  )
-                    ? {
-                        ...newRule[`${parents[0]}`][`${parents[1]}`][
-                          `${parents[2]}`
-                        ],
-                        [parents[3]]: checkNested(
-                          newRule,
-                          parents[0],
-                          parents[1],
-                          parents[2],
-                          parents[3]
-                        )
-                          ? {
-                              ...newRule[`${parents[0]}`][`${parents[1]}`][
-                                `${parents[2]}`
-                              ][`${parents[3]}`],
-                              [value]: targetValueArray,
-                            }
-                          : {
-                              [value]: targetValueArray,
-                            },
-                      }
-                    : {
-                        [parents[3]]: checkNested(
-                          newRule,
-                          parents[0],
-                          parents[1],
-                          parents[2],
-                          parents[3]
-                        )
-                          ? {
-                              ...newRule[`${parents[0]}`][`${parents[1]}`][
-                                `${parents[2]}`
-                              ][`${parents[3]}`],
-                              [value]: targetValueArray,
-                            }
-                          : {
-                              [value]: targetValueArray,
-                            },
-                      },
-                }
-              : {
-                  [parents[2]]: checkNested(
-                    newRule,
-                    parents[0],
-                    parents[1],
-                    parents[2]
-                  )
-                    ? {
-                        ...newRule[`${parents[0]}`][`${parents[1]}`][
-                          `${parents[2]}`
-                        ],
-                        [parents[3]]: checkNested(
-                          newRule,
-                          parents[0],
-                          parents[1],
-                          parents[2],
-                          parents[3]
-                        )
-                          ? {
-                              ...newRule[`${parents[0]}`][`${parents[1]}`][
-                                `${parents[2]}`
-                              ][`${parents[3]}`],
-                              [value]: targetValueArray,
-                            }
-                          : {
-                              [value]: targetValueArray,
-                            },
-                      }
-                    : {
-                        [parents[3]]: checkNested(
-                          newRule,
-                          parents[0],
-                          parents[1],
-                          parents[2],
-                          parents[3]
-                        )
-                          ? {
-                              ...newRule[`${parents[0]}`][`${parents[1]}`][
-                                `${parents[2]}`
-                              ][`${parents[3]}`],
-                              [value]: targetValueArray,
-                            }
-                          : {
-                              [value]: targetValueArray,
-                            },
-                      },
-                },
-          },
-        });
-      }
-    }
-  };
-
   const handleChangeRuleTitle = (event, name) => {
     if (event.key === "Enter") {
       var tempRule = cloneDeep(newRule);
@@ -637,20 +174,6 @@ const NewRulePage = ({ newRule , setNewRule}) => {
     }
   };
 
-  const handleShowLineListSign = (ruleListIndex, ruleLineListIndex) => {
-    let tempLineListSignShown = cloneDeep(lineListSignShown);
-    if (lineListSignShown[ruleListIndex][ruleLineListIndex].lineListShown) {
-      tempLineListSignShown[ruleListIndex][
-        ruleLineListIndex
-      ].lineListShown = false;
-    } else {
-      tempLineListSignShown[ruleListIndex][
-        ruleLineListIndex
-      ].lineListShown = true;
-    }
-
-    setLineListSignShown(tempLineListSignShown);
-  };
 
   const handleShowSign = () => {
     if (signShown) {
@@ -660,37 +183,9 @@ const NewRulePage = ({ newRule , setNewRule}) => {
     }
   };
 
-  const handleAddRuleListObject = () => {
-    let tempCounter = cloneDeep(listCounters);
-
-    if (listCounters.rule_list <= 2) {
-      tempCounter.rule_list++;
-
-      setRuleListCounters(tempCounter);
-    }
-
-    if (tempCounter.rule_list == 3) {
-      setMaxRuleList(true);
-    }
-  };
-
-  const handleAddRuleLineListObject = (ruleListIndex) => {
-    let tempCounters = cloneDeep(listCounters);
-
-    if (listCounters.rule_line_list[ruleListIndex].rule_line_list_count <= 9) {
-      tempCounters.rule_line_list[ruleListIndex].rule_line_list_count++;
-      setRuleListCounters(tempCounters);
-    }
-
-    if (tempCounters.rule_line_list[ruleListIndex].rule_line_list_count == 9) {
-      tempCounters.rule_line_list[ruleListIndex].max = true;
-      setRuleListCounters(tempCounters);
-    }
-  };
 
   useEffect(() => {
     console.log(newRule)
-    setNewRule(newRule)
     console.log(fields)
   }, [newRule, listCounters, fields]);
 
@@ -736,9 +231,9 @@ const NewRulePage = ({ newRule , setNewRule}) => {
   }).then(setRuleUpdatePopup(0))
   }
 
-  const handleDownloadRule = () => {
+  const handleDownloadRule = (temp) => {
     const url = window.URL.createObjectURL(
-      new Blob([JSON.stringify((newRule))])
+      new Blob([JSON.stringify((temp))])
     );
     const link = document.createElement("a");
     link.href = url;
@@ -806,6 +301,9 @@ const NewRulePage = ({ newRule , setNewRule}) => {
 
     }
 
+    const handleChooseImportFile = () => {
+      setFileUploadPopup(1)
+    }
 
 
 
@@ -819,8 +317,6 @@ const NewRulePage = ({ newRule , setNewRule}) => {
         style={{ marginTop: "15px", marginBottom: "20px" }}
         variant="h6"
       >
-        (Anything left blank will not be included in the rule) (For arrays,
-        separate all items with a comma)
       </Typography>
       <Typography
         style={{ marginTop: "15px", marginBottom: "20px" }}
@@ -836,7 +332,7 @@ const NewRulePage = ({ newRule , setNewRule}) => {
         }}
         variant="h4"
       >
-        Schema:
+        Schema: 
       </Typography>
       <Typography variant="h6" style={{ marginBottom: "10px" }}>
         <TextField
@@ -852,7 +348,7 @@ const NewRulePage = ({ newRule , setNewRule}) => {
 
       {[...Array(fields[0])].map((e, i) => <NestedObjectComponent paths={paths} parentString={paths[pathArrayIndex]} pathArrayIndex={pathArrayIndex} inArray={0} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
       {[...Array(fields[1])].map((e, i) => <ObjectArrayComponent paths={paths} parentString={paths[pathArrayIndex]} pathArrayIndex={pathArrayIndex} inArray={0} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[2])].map((e, i) => <ArrayComponent paths={paths} inArray={0} parentString={paths[pathArrayIndex]} newRule={newRule} marginLeft={0} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+      {[...Array(fields[2])].map((e, i) => <StringArrayElement paths={paths} inArray={0} parentString={paths[pathArrayIndex]} newRule={newRule} marginLeft={0} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
       {[...Array(fields[3])].map((e, i) => <FieldComponent paths={paths} inArray={0} parentString={paths[pathArrayIndex]} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
 
         <>
@@ -920,6 +416,11 @@ const NewRulePage = ({ newRule , setNewRule}) => {
       <Button onClick={handleNavigateToManager} className={classes.altButton}>
               <div style={{ transform: "translateY(2px)" }}>Go Back</div>
             </Button>
+
+            {!titleEntered ? <Button onClick={() => handleChooseImportFile()} className={classes.buttonGreen}>
+              <div style={{ transform: "translateY(2px)" , textDecoration: "none !important" }}>Import</div>
+            </Button> : <></>}
+
             {titleEntered ?  <><Button onClick={() => {clearNewRule()}} className={classes.redButton}>
               <div style={{ transform: "translateY(2px)" }}>Reset</div>
             </Button>
@@ -928,6 +429,8 @@ const NewRulePage = ({ newRule , setNewRule}) => {
             </Button></>: <></>}
             
           </Typography>
+
+          {fileUploadPopup ? <FileUploadPopup ruleNames={ruleNames} rules={rules}/> : <></>}
             
     </Container>
   );

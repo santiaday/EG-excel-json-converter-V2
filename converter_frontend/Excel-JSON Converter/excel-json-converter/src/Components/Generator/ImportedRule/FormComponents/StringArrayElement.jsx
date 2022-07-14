@@ -16,8 +16,7 @@ import NestedObjectComponent from "./NestedObjectComponent";
 import StringElement from "./StringElement";
 
 
-const StringArrayElement = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, handleAddRuleLineListObject, 
-  handleShowLineListSign, lineListSignShown, ruleLineListIndex, ruleListIndex, listCounters, marginLeft, setNewRule, parentString, setParentString, inArray}) => {
+const StringArrayElement = ({ newRule, marginLeft, setNewRule, parentString, setParentString, inArray, importField, goForRules, tempNewRule, paths, arrayIndex}) => {
 
 
 const ref = useRef()
@@ -28,6 +27,7 @@ const [parents, setParents] = useState(parentString)
 let tempString = parentString;
 const [thisFieldName, setThisFieldName] = useState("")
 const[index, setIndex] = useState(-1)
+const [importedValue , setImportedValue] = useState(importField ? importField : "")
 
 const [fields , setFields] = useState([0, 0, 0, 0])
 let _ = require('lodash');
@@ -43,7 +43,10 @@ setSignShown(true);
 };
 
 useEffect(() => {
-console.log(parentString)
+  if(importedValue){
+    setEntered(true)
+  }
+
 }, [])
 
 
@@ -71,10 +74,7 @@ if(event != null){
 if (event.key === "Enter") {
 
 if(inArray){
-console.log(parentString)
-console.log(newRule)
 setIndex( _.get(newRule , Object.keys(newRule)[0] + parentString).length)
-console.log(index)
 
 setThisFieldName(fieldName)
 }else{
@@ -84,9 +84,7 @@ setThisFieldName(fieldName)
 
 
 
-console.log(tempString)
 tempString = tempString === undefined ? "." +  fieldName : tempString + "." + fieldName
-console.log(tempString)
 setParents(tempString)
 
 var parentChain = tempString.split("..")
@@ -94,13 +92,10 @@ var parentChain = tempString.split("..")
 if(inArray){
 let tempRule = {...newRule}
 let tempArray = _.get(tempRule, Object.keys(newRule)[0] + parentString)
-console.log(newRule)
-console.log(parentString)
-console.log(tempArray)
 tempArray.push({[fieldName] : []})
-console.log(tempArray)
 
 _.set(tempRule, Object.keys(newRule)[0] + parentString, tempArray)
+console.log(tempRule)
 
 setNewRule(tempRule)
 
@@ -109,6 +104,7 @@ setNewRule(tempRule)
 if(!inArray){
 let tempRule = {...newRule}
 _.set(tempRule, Object.keys(newRule)[0] + tempString, [])
+console.log(tempRule)
 setNewRule(tempRule)
 }
 
@@ -127,9 +123,6 @@ setEntered(true)
     level = ((level.substring(0, level.length-2)) / 20) - 1
     fieldType = fieldType - 1;
 
-    console.log(fieldType);
-    console.log(level);
-    console.log("UP HGEREEEEEEEEEEEEEEE")
 
     var tempFields = cloneDeep(fields);
 
@@ -153,12 +146,45 @@ setEntered(true)
               style={{ transform: "translateY(-3px)" }}
               onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 1)}
               disabled={entered ? true : false}
+              value={Number.isInteger(parseInt(importedValue)) ? importedValue: importedValue.charAt(0) == '.' ? importedValue.substring(1) : importedValue}
 
             />
-      {" : {"}
+      {" : ["}
     </Typography>
 
-    {[...Array(fields[0])].map((e, i) => <StringElement inArray={1} parentString={tempString === undefined ? "." +  thisFieldName : tempString + (inArray ? "[" + index + "]" + "." + thisFieldName : "." + thisFieldName)}  newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+    {goForRules ? <>
+      {Object.entries(_.get(newRule, Object.keys(newRule)[0] + parentString)).map((key) => {
+      let objArrayIndex = 0;
+      if (!Array.isArray(key[1]) && typeof key[0] === "string") {
+        return (<StringElement
+          paths={paths}
+          importField={key[0]}
+          pathArrayIndex={arrayIndex}
+          parentString={parentString}
+          inArray={1}
+          newRule={newRule}
+          marginLeft={marginLeft + 20}
+          signShown={signShown}
+          showDropdown={showDropdown}
+          setShowDropDown={setShowDropDown}
+          handleShowSign={handleShowSign}
+          setNewRule={setNewRule}
+          setFields={setFields}
+          goForRules={goForRules}
+        />)
+      } 
+      objArrayIndex++
+    })
+    }</>
+
+    :
+
+    <></>}
+
+    {console.log(parentString)}
+    {console.log(thisFieldName)}
+
+    {[...Array(fields[0])].map((e, i) => <StringElement inArray={1} parentString={parentString}  newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
 
     {showDropdown && entered ? 
                 <>
@@ -214,7 +240,7 @@ setEntered(true)
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }}
     >
-      {" }"}
+      {" ]"}
     </Typography>
 
     

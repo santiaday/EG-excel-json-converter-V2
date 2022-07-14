@@ -11,7 +11,6 @@ import cloneDeep from "lodash/cloneDeep";
 import "../newRulePageStyles.css";
 import produce from "immer";
 import ObjectArrayComponent from "./ObjectArrayComponent";
-import ArrayComponent from "./ArrayComponent.jsx"
 import NestedObjectComponent from "./NestedObjectComponent";
 
 const FieldComponent = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, handleAddRuleLineListObject, 
@@ -56,454 +55,465 @@ const FieldComponent = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList,
           }
           
           
-          console.log(parentChain)
+          console.log(parentString)
 
-          if(level == 1){
-            console.log("this is level 1")
-            if(!isValue){
-                setNewRule(
-                    produce((draft) => {
-                      draft[Object.keys(newRule)[0]] = {...draft[Object.keys(newRule)[0]] , [fieldName]: ""}
-                    })
-                  )
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-                setNewRule(
-                    produce((draft) => {
-                      draft[Object.keys(newRule)[0]] = {...draft[Object.keys(newRule)[0]] , [fieldNameEntered]: fieldName}
-                    })
-                  )
-
-                  setValueEntered(true)
-            }
-            
-            
-          }
-
-          if(level == 2){
-            console.log("GOT HERE " + level + inArray)
-            if(!inArray){
-              if(!isValue){
-                setNewRule(
-                  produce((draft) => {
-                    draft[Object.keys(newRule)[0]][parentChain[1]] = {...draft[Object.keys(newRule)[0]][parentChain[1]] , [fieldName]: ""}
-                  })
-                )
-                setFieldNameEntered(fieldName)
-
-            }
-            if(isValue){
-              setNewRule(
-                produce((draft) => {
-                  draft[Object.keys(newRule)[0]][parentChain[1]] = {...draft[Object.keys(newRule)[0]][parentChain[1]] , [fieldNameEntered]: fieldName}
-                })
-              )
-
-              setValueEntered(true)
-            }
-            }
-
-            if(inArray){
-              if(!isValue){
-                let tempRule = cloneDeep(newRule)
-                  console.log("here")
-                  tempRule[Object.keys(newRule)[0]][parentChain[1]][fieldName] = ""
-
-                  setNewRule(tempRule)
-
+          if(!isValue){
                     setFieldNameEntered(fieldName)
               }
-              if(isValue){
-                let tempRule = {...newRule}
-                  console.log("here")
-                  tempRule[Object.keys(newRule)[0]][parentChain[1]][fieldNameEntered] = fieldName
 
-                  setNewRule(tempRule)
-  
-                    setValueEntered(true)
-              }
-            }
-            
-            
-          }
+          if(inArray && isValue){
+            let tempRule = {...newRule}
+            let tempArray = _.get(tempRule, Object.keys(newRule)[0] + parentString)
+            console.log(parentString)
+            console.log(tempArray)
+            tempArray.push({[fieldNameEntered] : fieldName})
 
-          if(level == 3){
-            console.log("GOT HERE " + level + inArray)
-            if(!inArray){
-              if(!isValue){
-                setNewRule(
-                  produce((draft) => {
-                    draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]] , [fieldName]: ""}
-                  })
-                )
-                setFieldNameEntered(fieldName)
-
-            }
-            if(isValue){
-              setNewRule(
-                produce((draft) => {
-                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]] , [fieldNameEntered]: fieldName}
-                })
-              )
-
-              setValueEntered(true)
-            }
-            }
-
-            if(inArray){
-              if(!isValue){
-                let tempRule = {...newRule}
-                  console.log("here")
-                  tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][fieldName] = ""
-
-                  setNewRule(tempRule)
-
-                    setFieldNameEntered(fieldName)
-              }
-              if(isValue){
-                let tempRule = {...newRule}
-                  console.log("here")
-                  tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][fieldNameEntered] = fieldName
-
-                  setNewRule(tempRule)
-  
-                    setValueEntered(true)
-              }
-            }
-          }
-
-          if(level == 4){
-            console.log("GOT HERE " + level + inArray)
-            if(!inArray){
-              if(!isValue){
-                setNewRule(
-                  produce((draft) => {
-                    draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] , [fieldName]: ""}
-                  })
-                )
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-              setNewRule(
-                produce((draft) => {
-                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] , [fieldNameEntered]: fieldName}
-                })
-              )
-
-              setValueEntered(true)
-            }
-            }
-
-            if(inArray){
-              if(!isValue){
-                console.log("here")
-                let tempRule = {...newRule}
-                tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][fieldName] = ""
+            _.set(tempRule, Object.keys(newRule)[0] + parentString, tempArray)
+            setValueEntered(true)
 
                 setNewRule(tempRule)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-                console.log("here")
-                let tempRule = {...newRule}
-                tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][fieldNameEntered] = fieldName
-
-                setNewRule(tempRule)
-
-                  setValueEntered(true)
-            }
-            }
-            
-            
-          }
-
-          if(level == 5){
-            console.log("GOT HERE " + level + inArray)
-            if(!inArray){
-              if(!isValue){
-                setNewRule(
-                  produce((draft) => {
-                    draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] , [fieldName]: ""}
-                  })
-                )
-                setFieldNameEntered(fieldName)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-              setNewRule(
-                produce((draft) => {
-                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] , [fieldNameEntered]: fieldName}
-                })
-              )
-
-              setValueEntered(true)
-            }
-            }
-
-            if(inArray){
-              if(!isValue){
-                let tempRule = {...newRule}
-                console.log("here")
-                tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][fieldName] = ""
-
-                setNewRule(tempRule)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-                console.log("here")
-                let tempRule = {...newRule}
-                tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][fieldNameEntered] = fieldName
-
-                setNewRule(tempRule)
-
-                  setValueEntered(true)
-            }
-            }
-            
-            
-          }
-
-          if(level == 6){
-            console.log("GOT HERE " + level + inArray)
-            if(!inArray){
-              if(!isValue){
-                setNewRule(
-                  produce((draft) => {
-                    draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] , [fieldName]: ""}
-                  })
-                )
-                setFieldNameEntered(fieldName)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-              setNewRule(
-                produce((draft) => {
-                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] , [fieldNameEntered]: fieldName}
-                })
-              )
-
-              setValueEntered(true)
-            }
-            }
-
-            if(inArray){
-              if(!isValue){
-                let tempRule = {...newRule}
-                console.log("here")
-                tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][fieldName] = ""
-
-                setNewRule(tempRule)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-                console.log("here")
-                let tempRule = {...newRule}
-                tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][fieldNameEntered] = fieldName
-
-                setNewRule(tempRule)
-
-                  setValueEntered(true)
-            }
-            }
-            
-            
-          }
-
-          if(level == 7){
-            console.log("GOT HERE " + level)
-            if(!inArray){
-              if(!isValue){
-                setNewRule(
-                  produce((draft) => {
-                    draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] , [fieldName]: ""}
-                  })
-                )
-                setFieldNameEntered(fieldName)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-              setNewRule(
-                produce((draft) => {
-                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] , [fieldNameEntered]: fieldName}
-                })
-              )
-
-              setValueEntered(true)
-            }
-            }
-
-            if(inArray){
-              if(!isValue){
-                let tempRule = {...newRule}
-                console.log("here")
-                tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][fieldName] = ""
-
-                setNewRule(tempRule)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-                console.log("here")
-                let tempRule = {...newRule}
-                tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][fieldNameEntered] = fieldName
-
-                setNewRule(tempRule)
-
-                  setValueEntered(true)
-            }
-            }
-            
-            
-          }
-
-          if(level == 8){
-            console.log("GOT HERE " + level)
-            if(!inArray){
-              if(!isValue){
-                setNewRule(
-                  produce((draft) => {
-                    draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] , [fieldName]: ""}
-                  })
-                )
-                setFieldNameEntered(fieldName)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-              setNewRule(
-                produce((draft) => {
-                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] , [fieldNameEntered]: fieldName}
-                })
-              )
-
-              setValueEntered(true)
-            }
-            }
-
-            if(inArray){
-                if(!isValue){
-                    let tempNewRule = {...newRule}
-                    tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][fieldName] = ""
-
-                    setNewRule(tempNewRule)
-
-                      setFieldNameEntered(fieldName)
-                }
-                if(isValue){
-                  let tempNewRule = {...newRule}
-                  tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][fieldNameEntered] = fieldName
-
-                    setNewRule(tempNewRule)
-    
-                      setValueEntered(true)
-                }
-            }
-
-            
-          }
-
-          if(level == 9){
-            console.log("GOT HERE " + level)
-            if(!inArray){
-              if(!isValue){
-                setNewRule(
-                  produce((draft) => {
-                    draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] , [fieldName]: ""}
-                  })
-                )
-                setFieldNameEntered(fieldName)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-              setNewRule(
-                produce((draft) => {
-                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] , [fieldNameEntered]: fieldName}
-                })
-              )
-
-              setValueEntered(true)
-            }
-            }
-
-            if(inArray){
-              if(!isValue){
-                let tempNewRule = {...newRule}
-                tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][fieldName] = ""
-
-                setNewRule(tempNewRule)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-              let tempNewRule = {...newRule}
-              tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][fieldNameEntered] = fieldName
-
-                setNewRule(tempNewRule)
-
-                  setValueEntered(true)
-            }
-            }
-            
-            
-          }
-
-          if(level == 10){
-            
-            if(!inArray){
-              if(!isValue){
-                setNewRule(
-                  produce((draft) => {
-                    draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] , [fieldName]: ""}
-                  })
-                )
-                setFieldNameEntered(fieldName)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-              setNewRule(
-                produce((draft) => {
-                  draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]]  , [fieldNameEntered]: fieldName}
-                })
-              )
-
-              setValueEntered(true)
-            }
-            }
-
-            if(inArray){
-              if(!isValue){
-                let tempNewRule = {...newRule}
-                tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][fieldName] = ""
-
-                setNewRule(tempNewRule)
-
-                  setFieldNameEntered(fieldName)
-            }
-            if(isValue){
-              let tempNewRule = {...newRule}
-              tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][fieldNameEntered] = fieldName
-
-                setNewRule(tempNewRule)
-
-                  setValueEntered(true)
-            }
-            }
-            
-            
+              
           }
           
+          if(!inArray && isValue){
+            let tempRule = {...newRule}
+            _.set(tempRule, Object.keys(newRule)[0] + parentString + "." + fieldNameEntered, fieldName)
+            setValueEntered(true)
+            setNewRule(tempRule)
+          }
+
           setEntered(true)
           setFieldEntered(true)
+
+          // if(level == 1){
+          //   console.log("this is level 1")
+          //   if(!isValue){
+          //       setNewRule(
+          //           produce((draft) => {
+          //             draft[Object.keys(newRule)[0]] = {...draft[Object.keys(newRule)[0]] , [fieldName]: ""}
+          //           })
+          //         )
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //       setNewRule(
+          //           produce((draft) => {
+          //             draft[Object.keys(newRule)[0]] = {...draft[Object.keys(newRule)[0]] , [fieldNameEntered]: fieldName}
+          //           })
+          //         )
+
+          //         setValueEntered(true)
+          //   }
+            
+            
+          // }
+
+          // if(level == 2){
+          //   console.log("GOT HERE " + level + inArray)
+          //   if(!inArray){
+          //     if(!isValue){
+          //       setNewRule(
+          //         produce((draft) => {
+          //           draft[Object.keys(newRule)[0]][parentChain[1]] = {...draft[Object.keys(newRule)[0]][parentChain[1]] , [fieldName]: ""}
+          //         })
+          //       )
+          //       setFieldNameEntered(fieldName)
+
+          //   }
+          //   if(isValue){
+          //     setNewRule(
+          //       produce((draft) => {
+          //         draft[Object.keys(newRule)[0]][parentChain[1]] = {...draft[Object.keys(newRule)[0]][parentChain[1]] , [fieldNameEntered]: fieldName}
+          //       })
+          //     )
+
+          //     setValueEntered(true)
+          //   }
+          //   }
+
+          //   if(inArray){
+          //     if(!isValue){
+
+          //           setFieldNameEntered(fieldName)
+          //     }
+          //     if(isValue){
+          //       let tempRule = {...newRule}
+          //         console.log("here")
+          //         tempRule[Object.keys(newRule)[0]][parentChain[1]].push({[`${fieldNameEntered}`] : fieldName})
+
+          //         setNewRule(tempRule)
+  
+          //           setValueEntered(true)
+          //     }
+          //   }
+            
+            
+          // }
+
+          // if(level == 3){
+          //   console.log("GOT HERE " + level + inArray)
+          //   if(inArray){
+          //     if(!isValue){
+    
+
+          //           setFieldNameEntered(fieldName)
+          //     }
+          //     if(isValue){
+          //       let tempRule = {...newRule}
+          //         console.log("here")
+          //         _.set(tempRule, Object.keys(newRule)[0] + parentString + "." + fieldNameEntered, fieldName)
+
+          //         setNewRule(tempRule)
+  
+          //           setValueEntered(true)
+          //     }
+          //   }
+
+          //   if(!inArray){
+          //     if(!isValue){
+          //           setFieldNameEntered(fieldName)
+          //     }
+          //     if(isValue){
+          //       let tempRule = {...newRule}
+
+          //       _.set(tempRule, Object.keys(newRule)[0] + parentString + "." + fieldNameEntered, fieldName)
+
+          //         setNewRule(tempRule)
+  
+          //           setValueEntered(true)
+          //     }
+          //   }
+          // }
+
+          // if(level == 4){
+          //   console.log("GOT HERE " + level + inArray)
+          //   if(!inArray){
+          //     if(!isValue){
+          //       setNewRule(
+          //         produce((draft) => {
+          //           draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] , [fieldName]: ""}
+          //         })
+          //       )
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //     setNewRule(
+          //       produce((draft) => {
+          //         draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] , [fieldNameEntered]: fieldName}
+          //       })
+          //     )
+
+          //     setValueEntered(true)
+          //   }
+          //   }
+
+          //   if(inArray){
+          //     if(!isValue){
+          //       console.log("here")
+          //       let tempRule = {...newRule}
+          //       tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][fieldName] = ""
+
+          //       setNewRule(tempRule)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //       console.log("here")
+          //       let tempRule = {...newRule}
+          //       tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][fieldNameEntered] = fieldName
+
+          //       setNewRule(tempRule)
+
+          //         setValueEntered(true)
+          //   }
+          //   }
+            
+            
+          // }
+
+          // if(level == 5){
+          //   console.log("GOT HERE " + level + inArray)
+          //   if(!inArray){
+          //     if(!isValue){
+          //       setNewRule(
+          //         produce((draft) => {
+          //           draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] , [fieldName]: ""}
+          //         })
+          //       )
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //     setNewRule(
+          //       produce((draft) => {
+          //         draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]] , [fieldNameEntered]: fieldName}
+          //       })
+          //     )
+
+          //     setValueEntered(true)
+          //   }
+          //   }
+
+          //   if(inArray){
+          //     if(!isValue){
+          //       let tempRule = {...newRule}
+          //       console.log("here")
+          //       tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][fieldName] = ""
+
+          //       setNewRule(tempRule)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //       console.log("here")
+          //       let tempRule = {...newRule}
+          //       tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][fieldNameEntered] = fieldName
+
+          //       setNewRule(tempRule)
+
+          //         setValueEntered(true)
+          //   }
+          //   }
+            
+            
+          // }
+
+          // if(level == 6){
+          //   console.log("GOT HERE " + level + inArray)
+          //   if(!inArray){
+          //     if(!isValue){
+          //       setNewRule(
+          //         produce((draft) => {
+          //           draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] , [fieldName]: ""}
+          //         })
+          //       )
+          //       setFieldNameEntered(fieldName)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //     setNewRule(
+          //       produce((draft) => {
+          //         draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]] , [fieldNameEntered]: fieldName}
+          //       })
+          //     )
+
+          //     setValueEntered(true)
+          //   }
+          //   }
+
+          //   if(inArray){
+          //     if(!isValue){
+          //       let tempRule = {...newRule}
+          //       console.log("here")
+          //       tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][fieldName] = ""
+
+          //       setNewRule(tempRule)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //       console.log("here")
+          //       let tempRule = {...newRule}
+          //       tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][fieldNameEntered] = fieldName
+
+          //       setNewRule(tempRule)
+
+          //         setValueEntered(true)
+          //   }
+          //   }
+            
+            
+          // }
+
+          // if(level == 7){
+          //   console.log("GOT HERE " + level)
+          //   if(!inArray){
+          //     if(!isValue){
+          //       setNewRule(
+          //         produce((draft) => {
+          //           draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] , [fieldName]: ""}
+          //         })
+          //       )
+          //       setFieldNameEntered(fieldName)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //     setNewRule(
+          //       produce((draft) => {
+          //         draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]] , [fieldNameEntered]: fieldName}
+          //       })
+          //     )
+
+          //     setValueEntered(true)
+          //   }
+          //   }
+
+          //   if(inArray){
+          //     if(!isValue){
+          //       let tempRule = {...newRule}
+          //       console.log("here")
+          //       tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][fieldName] = ""
+
+          //       setNewRule(tempRule)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //       console.log("here")
+          //       let tempRule = {...newRule}
+          //       tempRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][fieldNameEntered] = fieldName
+
+          //       setNewRule(tempRule)
+
+          //         setValueEntered(true)
+          //   }
+          //   }
+            
+            
+          // }
+
+          // if(level == 8){
+          //   console.log("GOT HERE " + level)
+          //   if(!inArray){
+          //     if(!isValue){
+          //       setNewRule(
+          //         produce((draft) => {
+          //           draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] , [fieldName]: ""}
+          //         })
+          //       )
+          //       setFieldNameEntered(fieldName)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //     setNewRule(
+          //       produce((draft) => {
+          //         draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]] , [fieldNameEntered]: fieldName}
+          //       })
+          //     )
+
+          //     setValueEntered(true)
+          //   }
+          //   }
+
+          //   if(inArray){
+          //       if(!isValue){
+          //           let tempNewRule = {...newRule}
+          //           tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][fieldName] = ""
+
+          //           setNewRule(tempNewRule)
+
+          //             setFieldNameEntered(fieldName)
+          //       }
+          //       if(isValue){
+          //         let tempNewRule = {...newRule}
+          //         tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][fieldNameEntered] = fieldName
+
+          //           setNewRule(tempNewRule)
+    
+          //             setValueEntered(true)
+          //       }
+          //   }
+
+            
+          // }
+
+          // if(level == 9){
+          //   console.log("GOT HERE " + level)
+          //   if(!inArray){
+          //     if(!isValue){
+          //       setNewRule(
+          //         produce((draft) => {
+          //           draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] , [fieldName]: ""}
+          //         })
+          //       )
+          //       setFieldNameEntered(fieldName)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //     setNewRule(
+          //       produce((draft) => {
+          //         draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]] , [fieldNameEntered]: fieldName}
+          //       })
+          //     )
+
+          //     setValueEntered(true)
+          //   }
+          //   }
+
+          //   if(inArray){
+          //     if(!isValue){
+          //       let tempNewRule = {...newRule}
+          //       tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][fieldName] = ""
+
+          //       setNewRule(tempNewRule)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //     let tempNewRule = {...newRule}
+          //     tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][fieldNameEntered] = fieldName
+
+          //       setNewRule(tempNewRule)
+
+          //         setValueEntered(true)
+          //   }
+          //   }
+            
+            
+          // }
+
+          // if(level == 10){
+            
+          //   if(!inArray){
+          //     if(!isValue){
+          //       setNewRule(
+          //         produce((draft) => {
+          //           draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] , [fieldName]: ""}
+          //         })
+          //       )
+          //       setFieldNameEntered(fieldName)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //     setNewRule(
+          //       produce((draft) => {
+          //         draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]] = {...draft[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][parentChain[9]]  , [fieldNameEntered]: fieldName}
+          //       })
+          //     )
+
+          //     setValueEntered(true)
+          //   }
+          //   }
+
+          //   if(inArray){
+          //     if(!isValue){
+          //       let tempNewRule = {...newRule}
+          //       tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][fieldName] = ""
+
+          //       setNewRule(tempNewRule)
+
+          //         setFieldNameEntered(fieldName)
+          //   }
+          //   if(isValue){
+          //     let tempNewRule = {...newRule}
+          //     tempNewRule[Object.keys(newRule)[0]][parentChain[1]][parentChain[2]][parentChain[3]][parentChain[4]][parentChain[5]][parentChain[6]][parentChain[7]][parentChain[8]][fieldNameEntered] = fieldName
+
+          //       setNewRule(tempNewRule)
+
+          //         setValueEntered(true)
+          //   }
+            // }
+            
+            
+          // }
+          
+          
           }
 
           

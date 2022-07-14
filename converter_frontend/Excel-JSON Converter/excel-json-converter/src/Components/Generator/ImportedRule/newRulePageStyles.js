@@ -164,12 +164,11 @@ export default makeStyles((theme) => ({
         border: "2px solid #57deb7",
          transition: "background 0.15s ease-in-out",
          color: "white",
-          minWidth: "120px",
-          margin: "5px 10px 15px 0px",
-          borderRadius: "10px",
-          cursor: "pointer",
-          fontWeight: "bold",
-          textDecoration: "none !important",
+         minWidth: "120px",
+         margin: "5px 10px 15px 0px",
+         borderRadius: "10px",
+         cursor: "pointer",
+         fontWeight: "bold",
     
          '&:hover': {
           background: "#47ba99",
