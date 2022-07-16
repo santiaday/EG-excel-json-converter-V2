@@ -15,7 +15,7 @@ import FieldComponent from "./FieldComponent"
 import StringElement from "./StringElement";
 
 
-const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentString, pathArrayIndex, parentString, inArray, paths, importField, goForRules, tempNewRule, arrayIndex}) => {
+const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentString, pathArrayIndex, parentString, inArray, paths, importField, goForRules, tempNewRule, arrayIndex, parentFields, setParentFields, arrayName}) => {
 
 
   const ref = useRef()
@@ -30,6 +30,8 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
   const [importedValue , setImportedValue] = useState(importField ? importField : "")
   const [componentsArray, setComponentsArray] = useState([])
   const [fields , setFields] = useState([])
+  const [hovering, setHovering] = useState(false)
+  const [deleted, setDeleted] = useState(false)
   
 
   const handleShowSign = () => {
@@ -46,6 +48,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
       handleAddField(null, null, true)
     }
 
+    
   }, [])
 
 
@@ -62,22 +65,23 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
           
 
 
-
-          tempString = tempString === undefined ? "." + fieldName : tempString + "." + fieldName
-          setParents(tempString)
-
             var parentChain = tempString.split(".")
+            console.log(parentString)
         
 
             if(inArray){
               setIndex( _.get(newRule , Object.keys(newRule)[0] + parentString).length)
                
               setThisFieldName(fieldName)
+              console.log(fieldName)
             }else{
               setThisFieldName(fieldName)
+              console.log(fieldName)
             }
 
             if(inArray){
+              console.log(parentString)
+              console.log(fieldName)
               let tempRule = {...newRule}
               let tempArray = _.get(tempRule, Object.keys(newRule)[0] + parentString)
               tempArray.push({[fieldName] : {}})
@@ -89,8 +93,9 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
             }
             
             if(!inArray){
+              console.log(tempString)
               let tempRule = {...newRule}
-              _.set(tempRule, Object.keys(newRule)[0] + tempString, {})
+              _.set(tempRule, Object.keys(newRule)[0] + parentString + "." +  fieldName, {})
               setNewRule(tempRule)
             }
             
@@ -104,18 +109,20 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
   }
 
   const handleAddField = (fieldType, level, importSignal) => {
+
     let tempFields = fields;
 
     if (importSignal && fields.length == 0) {
       Object.entries(_.get(newRule, Object.keys(newRule)[0] + parentString)).map((key) => {
+
         if (Array.isArray(key[1]) && typeof key[1][0] === "object") {
-          tempFields.push([5, inArray ? "[" + key[0] + "]" : "." + key[0], tempFields.length]);
+          tempFields.push([5, inArray && /^\d+$/.test(key[0]) ? "[" + key[0] + "]" : "." + key[0], tempFields.length]);
         } else if (!Array.isArray(key[1]) && typeof key[1] === "object") {
-          tempFields.push([4, inArray ? "[" + key[0] + "]" : "." + key[0], tempFields.length]);
+          tempFields.push([4, inArray && /^\d+$/.test(key[0]) ? "[" + key[0] + "]" : "." + key[0], tempFields.length]);
         } else if (Array.isArray(key[1]) && typeof key[1][0] === "string") {
-          tempFields.push([6, inArray ? "[" + key[0] + "]" : "." + key[0], tempFields.length]);
+          tempFields.push([6, inArray && /^\d+$/.test(key[0])? "[" + key[0] + "]" : "." + key[0], tempFields.length]);
         } else if (!Array.isArray(key[1]) && typeof key[1] === "string") {
-          tempFields.push([7, inArray ? "[" + key[0] + "]" : "." + key[0], tempFields.length]);
+          tempFields.push([7, inArray && /^\d+$/.test(key[0])? "[" + key[0] + "]" : "." + key[0], tempFields.length]);
         }
         setFields([...tempFields]);
       });
@@ -124,26 +131,46 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
     if (!importSignal) {
       level = level.substring(0, level.length - 2) / 20 - 1;
       fieldType = fieldType - 1;
-      console.log("we are here")
-      console.log(parentString)
+      console.log(thisFieldName + parentString)
 
-      if(parentString === thisFieldName){
+      if(parentString.substring(parentString.lastIndexOf('.'), parentString.length) === thisFieldName){
         tempFields.push([fieldType, "", tempFields.length]);
       }else{
-        tempFields.push([fieldType, "." + thisFieldName, tempFields.length]);
+        console.log(thisFieldName)
+        console.log(parentString)
+        tempFields.push([fieldType, inArray ? (parseInt(parentString.charAt(parentString.length-2)) != arrayIndex ? "[" + arrayIndex + "]" : "") + "." + thisFieldName : parseInt(thisFieldName.charAt(1)) === arrayIndex ? "" : "." + thisFieldName, tempFields.length]);
       }
       
-
+      console.log(tempFields)
       setFields([...tempFields]);
       setShowDropDown(0);
       setSignShown(0);
     }
   };
 
+  const handleRemoveField = () => {
+
+    if(inArray){
+      setDeleted(true)
+      let tempRule = {...newRule}
+      _.unset(tempRule, Object.keys(newRule)[0] + (parseInt(parentString.charAt(parentString.length-2)) === arrayIndex ? parentString : parentString + "[" + arrayIndex + "]" + "." + thisFieldName))
+      
+      setNewRule(tempRule)
+        
+    }
+    
+    if(!inArray){
+
+      let tempRule = {...newRule}
+      _.unset(tempRule, Object.keys(newRule)[0] + (parentString.substring(parentString.lastIndexOf('.'), parentString.length) === thisFieldName ? parentString : parentString + "." + thisFieldName))
+      setDeleted(true)
+      setNewRule(tempRule)
+    }
+  }
+
 
     useEffect(() => {
       let tempComponentsArray=[]
-      console.log(fields)
       if(newRule != null ){
         fields.map((e, i) => {
           {
@@ -151,7 +178,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
             
               tempComponentsArray.push(<NestedObjectComponent
                   paths={paths}
-                  parentString={parentString === "" ? e[1] : parentString + e[1]}
+                  parentString={parentString === "" ? e[1] : e[1].charAt(e[1].length-1) === ']' ? parentString : parentString + (e[1].length > 1 ? e[1] : "")}
                   pathArrayIndex={e[2]}
                   inArray={0}
                   newRule={newRule}
@@ -166,9 +193,11 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
           }
           {
             if (e[0] == 1) {
+              console.log(parentString)
+              console.log(parentString.charAt(parentString.length-1))
               tempComponentsArray.push(<ObjectArrayComponent
                   paths={paths}
-                  parentString={parentString === "" ? e[1] : parentString + e[1]}
+                  parentString={parentString === "" ? e[1] : e[1].charAt(e[1].length-1) === ']' ? parentString : parentString + (e[1].length > 1 ? e[1] : "")}
                   pathArrayIndex={e[2]}
                   inArray={0}
                   newRule={newRule}
@@ -185,7 +214,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
             if (e[0] == 2) {
               tempComponentsArray.push(<StringArrayElement
                   paths={paths}
-                  parentString={parentString === "" ? e[1] : parentString + e[1]}
+                  parentString={parentString === "" ? e[1] : e[1].charAt(e[1].length-1) === ']' ? parentString : parentString + (e[1].length > 1 ? e[1] : "")}
                   pathArrayIndex={e[2]}
                   inArray={0}
                   newRule={newRule}
@@ -202,7 +231,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
             if (e[0] == 3) {
               tempComponentsArray.push(<FieldComponent
                   paths={paths}
-                  parentString={parentString === "" ? e[1] : parentString + e[1]}
+                  parentString={parentString === "" ? e[1] : e[1].charAt(e[1].length-1) === ']' ? parentString : parentString + (e[1].length > 1 ? e[1] : "")}
                   pathArrayIndex={e[2]}
                   inArray={0}
                   newRule={newRule}
@@ -299,16 +328,22 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
           }
         })
       }
+
       setComponentsArray([...tempComponentsArray])
-  
+
     }, [newRule, fields])
 
   return (
     <>
+    {!deleted ? <>
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `calc(${marginLeft}px + 20px)` }}
     >
+       <span onMouseEnter={() => setHovering(true)} onMouseLeave={()=> setHovering(false)} onClick={() => handleRemoveField()}><svg style={{marginTop: "8px" , marginRight: "8px", cursor: "pointer"}} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" 
+      xmlns="http://www.w3.org/2000/svg" >
+        <path fill={hovering ? "rgba(255, 55, 92, 1)" : "rgba(255, 55, 92, 0.2)"} stroke="rgb(255, 255, 255)" strokeWidth="2" d="M12,22 C17.5228475,22 22,17.5228475 22,12 C22,6.4771525 17.5228475,2 12,2 C6.4771525,2 2,6.4771525 2,12 C2,17.5228475 6.4771525,22 12,22 Z M6,12 L18,12"></path></svg>
+      </span>
       {importField ?
       <TextField
               variant="outlined"
@@ -325,103 +360,17 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
               variant="outlined"
               size="small"
               style={{ transform: "translateY(-3px)" }}
-              onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 1)}
+              onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, importField ? 1 : 0)}
               disabled={entered ? true : false}
             />
       }
       {" : {"}
     </Typography>
-
-    {/* {goForRules && importedValue ? 
-    <>
-      {Object.entries(_.get(newRule, Object.keys(newRule)[0] + parentString)).map((key) => {
-      let objArrayIndex = 0;
-      console.log(newRule)
-      if (Array.isArray(key[1]) && typeof key[1][0] === "object") {
-        paths[arrayIndex] = paths[arrayIndex] + "." + key[0]
-        return (<ObjectArrayComponent
-          paths={paths}
-          importField={key[0] ? key[0] : 0}
-          pathArrayIndex={arrayIndex}
-          parentString={parentString + "." + key[0]}
-          inArray={1}
-          newRule={newRule}
-          marginLeft={marginLeft + 20}
-          signShown={signShown}
-          showDropdown={showDropdown}
-          setShowDropDown={setShowDropDown}
-          handleShowSign={handleShowSign}
-          setNewRule={setNewRule}
-          setFields={setFields}
-          goForRules={goForRules}
-        />)
-      } else if (!Array.isArray(key[1]) && typeof key[1] === "object") {
-        paths[arrayIndex] = paths[arrayIndex] + "." + key[0]
-        return (<NestedObjectComponent
-          paths={paths}
-          importField={key[0] != "" ? key[0] : 0}
-          pathArrayIndex={arrayIndex}
-          parentString={parentString + "." + key[0]}
-          inArray={1}
-          newRule={newRule}
-          marginLeft={marginLeft + 20}
-          signShown={signShown}
-          showDropdown={showDropdown}
-          setShowDropDown={setShowDropDown}
-          handleShowSign={handleShowSign}
-          setNewRule={setNewRule}
-          setFields={setFields}
-          goForRules={goForRules}
-        />)
-      } else if (Array.isArray(key[1]) && typeof key[1][0] === "string") {
-        paths[arrayIndex] = paths[arrayIndex] + "." + key[0]
-        return (<StringArrayElement
-          paths={paths}
-          importField={key[0]}
-          pathArrayIndex={arrayIndex}
-          parentString={parentString + "." + key[0]}
-          inArray={1}
-          newRule={newRule}
-          marginLeft={marginLeft + 20}
-          signShown={signShown}
-          showDropdown={showDropdown}
-          setShowDropDown={setShowDropDown}
-          handleShowSign={handleShowSign}
-          setNewRule={setNewRule}
-          setFields={setFields}
-          goForRules={goForRules}
-        />)
-
-      } else if (!Array.isArray(key[1]) && typeof key[1] === "string") {
-        return (<FieldComponent
-          paths={paths}
-          importField={key[0]}
-          pathArrayIndex={arrayIndex}
-          parentString={parentString + "." + key[0]}
-          inArray={1}
-          newRule={newRule}
-          marginLeft={marginLeft + 20}
-          signShown={signShown}
-          showDropdown={showDropdown}
-          setShowDropDown={setShowDropDown}
-          handleShowSign={handleShowSign}
-          setNewRule={setNewRule}
-          setFields={setFields}
-          goForRules={goForRules}
-        />)
-      }
-      objArrayIndex++
-    })
-    } */}
     <>
     {componentsArray}
     </>
     
 
-    {/* {[...Array(fields[0])].map((e, i) => <NestedObjectComponent  tempNewRule={tempNewRule} inArray={0} parentString={importField ? parentString : tempString === undefined ? "." +  thisFieldName : tempString + (inArray ? "[" + index + "]" + "." + thisFieldName : "." + thisFieldName)} setParentString={setParentString} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[1])].map((e, i) => <ObjectArrayComponent inArray={0} parentString={importField ? parentString :tempString === undefined ? "." +  thisFieldName : tempString + (inArray ? "[" + index + "]" + "." + thisFieldName : "." + thisFieldName)} setParentString={setParentString} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[2])].map((e, i) => <StringArrayElement inArray={0} parentString={importField ? parentString :tempString === undefined ? "." +  thisFieldName : tempString + (inArray ? "[" + index + "]" + "." + thisFieldName : "." + thisFieldName)} setParentString={setParentString} newRule={newRule} marginLeft={marginLeft} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[3])].map((e, i) => <FieldComponent inArray={0} parentString={importField ? parentString :tempString === undefined ? "." +  thisFieldName : tempString + (inArray ? "[" + index + "]" + "." + thisFieldName : "." + thisFieldName)} setParentString={setParentString} newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)} */}
 
     {showDropdown && entered ? 
                 <>
@@ -483,6 +432,10 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
       {" }"}
     </Typography>
     
+  </>
+     : <></>}
+  
+  
   </>
   );
 };

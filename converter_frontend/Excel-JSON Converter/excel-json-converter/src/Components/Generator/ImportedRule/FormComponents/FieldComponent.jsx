@@ -13,8 +13,9 @@ import produce from "immer";
 import ObjectArrayComponent from "./ObjectArrayComponent";
 import NestedObjectComponent from "./NestedObjectComponent";
 import $ from 'jquery'
+import {GrSubtractCircle} from "react-icons/gr"
 
-const FieldComponent = ({ newRule, arrayIndex, goForRules, tempNewRule, marginLeft, setNewRule, importField, parentString, setParentString, branchParentString, inArray}) => {
+const FieldComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRule, importField, parentString, setParentString, branchParentString, inArray, arrayIndex, fields, setFields}) => {
 
 
   const ref = useRef()
@@ -25,11 +26,10 @@ const FieldComponent = ({ newRule, arrayIndex, goForRules, tempNewRule, marginLe
   const [fieldEntered , setFieldEntered] = useState(false)
   const [keyEntered , setKeyEntered] = useState(false)
   const [fieldNameEntered , setFieldNameEntered] = useState("")
-  
-  const [fields , setFields] = useState([0, 0, 0, 0])
-  const [level1Fields, setLevel1Fields] = useState(fields[0])
   const [valueEntered , setValueEntered] = useState(false)
   const [importedValue , setImportedValue] = useState(importField ? importField : "")
+  const [hovering, setHovering] = useState(false)
+  const [deleted, setDeleted] = useState(false)
 
   const handleShowSign = () => {
     if (signShown) {
@@ -44,7 +44,6 @@ const FieldComponent = ({ newRule, arrayIndex, goForRules, tempNewRule, marginLe
       setFieldEntered(true)
     }
 
-    console.log(importedValue)
   }, [])
 
 
@@ -52,11 +51,11 @@ const FieldComponent = ({ newRule, arrayIndex, goForRules, tempNewRule, marginLe
   const handleRuleFieldUpdate = (event,fieldName, level, objectType, isValue) => {
 
     level = (level / 20) - 1
+    console.log(parentString)
 
       if(event != null){
         if (event.key === "Enter") {
 
-          console.log(parentString)
 
           if(parentChain != "" && level != 1){
             var parentChain = parentString.split("..")
@@ -73,29 +72,30 @@ const FieldComponent = ({ newRule, arrayIndex, goForRules, tempNewRule, marginLe
 
             _.set(tempRule, Object.keys(newRule)[0] + parentString, fieldName)
             setValueEntered(true)
-            console.log(tempRule)
 
                 setNewRule(tempRule)
         }
 
          if(!importField){ if(inArray && isValue){
+          console.log(parentString)
             let tempRule = {...newRule}
             let tempArray = _.get(tempRule, Object.keys(newRule)[0] + parentString)
+            console.log(tempArray)
             tempArray.push({[fieldNameEntered] : fieldName})
+            
 
             _.set(tempRule, Object.keys(newRule)[0] + parentString, tempArray)
             setValueEntered(true)
-            console.log(tempRule)
 
                 setNewRule(tempRule)
               
           }
           
           if(!inArray && isValue){
+            console.log(parentString)
             let tempRule = {...newRule}
             _.set(tempRule, Object.keys(newRule)[0] + parentString + "." + fieldNameEntered, fieldName)
             setValueEntered(true)
-            console.log(tempRule)
             setNewRule(tempRule)
           }}
 
@@ -108,22 +108,47 @@ const FieldComponent = ({ newRule, arrayIndex, goForRules, tempNewRule, marginLe
   const handleAddField = (fieldType , level) => {
     level = ((level.substring(0, level.length-2)) / 20) - 1
     fieldType = fieldType - 1;
-
-    var tempFields = cloneDeep(fields);
-
-    tempFields[fieldType] = tempFields[fieldType] + 1
-
-    setFields(tempFields);
     setShowDropDown(0);
     setSignShown(0);
     }
 
+    const handleRemoveField = () => {
+      
+
+      if(inArray){
+        let tempRule = {...newRule}
+        let tempFields = [...fields]
+        tempFields.splice(arrayIndex,1)
+
+        let tempArray = _.get(tempRule , Object.keys(newRule)[0] + parentString)
+        tempArray.splice(arrayIndex, 1)
+        setDeleted(true)
+        setNewRule(tempRule)
+        setFields([...tempFields])
+          
+      }
+      
+      if(!inArray){
+        let tempRule = {...newRule}
+        _.unset(tempRule, Object.keys(newRule)[0] + parentString)
+        setDeleted(true)
+        setNewRule(tempRule)
+      }
+    }
+    
+
   return (
     <>
+    {!deleted ?
+      <>
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `calc(${marginLeft}px + 20px)` }}
     >
+      <span onMouseEnter={() => setHovering(true)} onMouseLeave={()=> setHovering(false)} onClick={() => handleRemoveField()}><svg style={{marginTop: "8px" , marginRight: "8px", cursor: "pointer"}} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" 
+      xmlns="http://www.w3.org/2000/svg" >
+        <path fill={hovering ? "rgba(255, 55, 92, 1)" : "rgba(255, 55, 92, 0.2)"} stroke="rgb(255, 255, 255)" strokeWidth="2" d="M12,22 C17.5228475,22 22,17.5228475 22,12 C22,6.4771525 17.5228475,2 12,2 C6.4771525,2 2,6.4771525 2,12 C2,17.5228475 6.4771525,22 12,22 Z M6,12 L18,12"></path></svg>
+      </span>
 
     {importField ? 
       <TextField
@@ -161,6 +186,9 @@ const FieldComponent = ({ newRule, arrayIndex, goForRules, tempNewRule, marginLe
     </Typography>
     
   </>
+
+       : <></>}
+    </>
   );
 };
 

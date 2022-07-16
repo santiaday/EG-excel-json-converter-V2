@@ -59,56 +59,6 @@ const ImportedRulePage = ({
   let arrayIndex = 0;
   const [maxRuleList, setMaxRuleList] = useState(false);
   const [maxRuleLineList, setMaxRuleLineList] = useState(false);
-  const [lineListSignShown, setLineListSignShown] = useState([
-    [
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-    ],
-    [
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-    ],
-    [
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-    ],
-    [
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-    ],
-  ]);
   const [newRule, setNewRule] = useState({});
   const [tempNewRule, setTempNewRule] = useState({});
 
@@ -286,7 +236,7 @@ const ImportedRulePage = ({
       level = level.substring(0, level.length - 2) / 20 - 1;
       fieldType = fieldType - 1;
 
-      tempFields.push([fieldType, null, tempFields.length]);
+      tempFields.push([fieldType, , tempFields.length]);
 
       setFields([...tempFields]);
       setCounter(tempCounter)
@@ -301,13 +251,14 @@ const ImportedRulePage = ({
   useEffect(() => {
     let tempComponentsArray=[]
     if(titleEntered && newRule != null ){
+      console.log(fields)
       fields.map((e, i) => {
         {
           if (e[0] == 0) {
           
             tempComponentsArray.push(<NestedObjectComponent
                 paths={paths}
-                parentString={e[1]}
+                parentString={""}
                 pathArrayIndex={e[2]}
                 inArray={0}
                 newRule={newRule}
@@ -325,9 +276,9 @@ const ImportedRulePage = ({
           if (e[0] == 1) {
             tempComponentsArray.push(<ObjectArrayComponent
                 paths={paths}
-                parentString={e[1]}
+                parentString={""}
                 pathArrayIndex={e[2]}
-                inArray={1}
+                inArray={0}
                 newRule={newRule}
                 marginLeft={20}
                 signShown={signShown}
@@ -343,9 +294,9 @@ const ImportedRulePage = ({
           if (e[0] == 2) {
             tempComponentsArray.push(<StringArrayElement
                 paths={paths}
-                parentString={e[1]}
+                parentString={""}
                 pathArrayIndex={e[2]}
-                inArray={1}
+                inArray={0}
                 newRule={newRule}
                 marginLeft={20}
                 signShown={signShown}
@@ -361,7 +312,7 @@ const ImportedRulePage = ({
           if (e[0] == 3) {
             tempComponentsArray.push(<FieldComponent
                 paths={paths}
-                parentString={e[1]}
+                parentString={""}
                 pathArrayIndex={e[2]}
                 inArray={0}
                 newRule={newRule}
@@ -403,7 +354,7 @@ const ImportedRulePage = ({
                 importField={e[1]}
                 parentString={e[1]}
                 pathArrayIndex={e[2]}
-                inArray={1}
+                inArray={0}
                 newRule={newRule}
                 marginLeft={20}
                 signShown={signShown}
@@ -468,6 +419,34 @@ const ImportedRulePage = ({
   }, [newRule, fields])
 
 
+  function clean(object) {
+
+
+    if(object != null){
+    Object.entries(object).forEach(([k, v]) => {
+      if (v && typeof v === "object") {
+
+        if(Array.isArray(v)){
+          if(v.includes(undefined)){
+            v.splice(v.findIndex(Object.is.bind(null, undefined)),1)
+          }
+        }
+        clean(v);
+      }
+      if (
+        (v && typeof v === "object" && !Object.keys(v).length) ||
+        v === null ||
+        v === undefined
+      ) {
+        if (Array.isArray(object)) {
+          object.splice(k,1)
+        } else {
+        }
+      }
+    });
+  }
+    return object;
+  }
 
   return (
     <Container style={{ width: "90vw", maxWidth: "85vw" }}>
@@ -483,7 +462,7 @@ const ImportedRulePage = ({
         style={{ marginTop: "15px", marginBottom: "20px" }}
         variant="h6"
       >
-        Please enter the name of the rule and press "Enter".
+        {!titleEntered ? <span>Please enter the name of the rule and press "Enter".</span> : <span>To include new fields in the rule, please input both the key and the value.</span>}
       </Typography>
       <Typography
         style={{
@@ -570,7 +549,7 @@ const ImportedRulePage = ({
             <RuleUpdateConfirmationPopup
               rules={rules}
               ruleTitle={ruleTitle}
-              newRule={newRule}
+              newRule={clean(newRule)}
               setRuleUpdatePopup={setRuleUpdatePopup}
               ruleUpdatePopup={1}
               handleStoreRule={handleStoreRule}
@@ -584,7 +563,7 @@ const ImportedRulePage = ({
               ruleUpdatePopup={2}
               rules={rules}
               ruleTitle={ruleTitle}
-              newRule={newRule}
+              newRule={clean(newRule)}
               handleStoreRule={handleStoreRule}
               handleDownloadRule={handleDownloadRule}
             />
