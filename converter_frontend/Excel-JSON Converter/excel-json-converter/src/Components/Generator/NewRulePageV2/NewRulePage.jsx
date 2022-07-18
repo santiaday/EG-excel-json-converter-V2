@@ -342,6 +342,7 @@ const NewRulePage = ({ newRule , setNewRule}) => {
           size="small"
           style={{ transform: "translateY(-3px)" }}
           disabled={titleEntered ? true : false}
+          inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
         />
         {" : {"}
       </Typography>
@@ -364,6 +365,7 @@ const NewRulePage = ({ newRule , setNewRule}) => {
                 size="small"
                 label="Type Of Field"
                 style={{ transform: "translateY(-3px)" , minWidth: "150px", marginLeft: "20px"}}
+                inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
               > 
               <MenuItem value={1}>Object</MenuItem>
               <MenuItem value={2}>Object Array</MenuItem>
@@ -430,7 +432,7 @@ const NewRulePage = ({ newRule , setNewRule}) => {
             
           </Typography>
 
-          {fileUploadPopup ? <FileUploadPopup ruleNames={ruleNames} rules={rules}/> : <></>}
+          {fileUploadPopup ? <FileUploadPopup setFileUploadPopup={setFileUploadPopup} ruleNames={ruleNames} rules={rules}/> : <></>}
             
     </Container>
   );

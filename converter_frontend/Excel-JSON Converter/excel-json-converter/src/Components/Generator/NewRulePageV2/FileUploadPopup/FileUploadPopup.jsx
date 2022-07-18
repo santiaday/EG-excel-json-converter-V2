@@ -14,8 +14,10 @@ import "./styles.css";
 import { BsArrowRight } from "react-icons/bs";
 import Divider from '@mui/material/Divider';
 import Dropzone, { useDropzone } from "react-dropzone";
+import { AiFillCloseCircle } from "react-icons/ai";
+import { AiOutlineCloudUpload } from "react-icons/ai"
 
-const FileUploadPopup = ({ ruleNames }) => {
+const FileUploadPopup = ({ ruleNames, setFileUploadPopup }) => {
 
   const[existingRuleIndex , setExistingRuleIndex] = useState(-1)
   const [file , setFile] = useState()
@@ -110,12 +112,13 @@ const FileUploadPopup = ({ ruleNames }) => {
       <div className={classes.toolbar} style={{ marginBottom: "30px" }} />
       <div className="popup-box">
         <div className="box">
+        <AiFillCloseCircle onClick={() => setFileUploadPopup(0)} style={{float: "right", cursor: "pointer"}}/>
         <br className={"unselectable"} />
           <Typography variant="h3" style={{ marginBottom: "20px" }}>
-            Update Rule Storage?
+            JSON File Import
           </Typography>
           <Typography variant="h5" style={{fontWeight: "600"}}>
-            Would you like to update the rule storage system? This will override any existing rules with the same names and add any other ones to the storage system as well. 
+            Importing a .json file will autofill all of the keys to make filling it out faster and easier. Please make sure the .json file does not have any comments as it will not import properly.
           </Typography>
           <br className={"unselectable"} />
           <br className={"unselectable"} />
@@ -161,8 +164,10 @@ const FileUploadPopup = ({ ruleNames }) => {
                     }}
                   >
                     <label style={{ textAlign: "center" }} for="files">
-                      <div className={classes.text}>Upload Your Files Here</div>
+                    
+                    <AiOutlineCloudUpload style={{fontSize: "50px"}}/>
                       <br />
+                      
                       <div className={classes.subText}>
                         Click To Browse Or <br></br>Drag And Drop
                       </div>

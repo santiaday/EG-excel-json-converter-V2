@@ -44,10 +44,6 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
 
 
   const handleRuleFieldUpdate = (event,fieldName, level, objectType) => {
-    //OBJECTTYPE 1 IS OBJECT
-    //OBJECTYPE 2 IS OBJECT ARRAY
-    //OBJECTTYPE 3 IS ARRAY
-    //OBJECTYPE 4 IS FIELD
 
     level = (level / 20)   
 
@@ -134,6 +130,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
               style={{ transform: "translateY(-3px)" }}
               onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 1)}
               disabled={entered ? true : false}
+              inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
 
             />
       {" : {"}
@@ -154,6 +151,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
                 size="small"
                 label="Type Of Field"
                 style={{ transform: "translateY(-3px)" , minWidth: "150px", marginLeft: `calc(${marginLeft}px + 20px)`}}
+                inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
               > 
               <MenuItem value={1}>Object</MenuItem>
               <MenuItem value={2}>Object Array</MenuItem>

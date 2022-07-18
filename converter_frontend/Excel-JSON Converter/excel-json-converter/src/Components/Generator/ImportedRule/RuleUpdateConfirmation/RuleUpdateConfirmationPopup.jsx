@@ -13,6 +13,7 @@ import {
 import "./styles.css";
 import { BsArrowRight } from "react-icons/bs";
 import Divider from '@mui/material/Divider';
+import { AiFillCloseCircle } from "react-icons/ai"
 
 const RuleUpdateConfirmationPopup = ({
 rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup ,ruleNames , handleDownloadRule, clean}) => {
@@ -78,6 +79,7 @@ rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup
       <div className={classes.toolbar} style={{ marginBottom: "30px" }} />
       <div className="popup-box">
         <div className="box">
+        <AiFillCloseCircle onClick={() => setRuleUpdatePopup(0)} style={{float: "right", cursor: "pointer"}}/>
         <br className={"unselectable"} />
         {ruleUpdatePopup == 1 ? 
         

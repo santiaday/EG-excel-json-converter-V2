@@ -13,6 +13,7 @@ import ObjectArrayComponent from "./ObjectArrayComponent";
 import StringArrayElement from "./StringArrayElement";
 import FieldComponent from "./FieldComponent"
 import StringElement from "./StringElement";
+import IntegerComponent from "./IntegerComponent";
 
 
 const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentString, pathArrayIndex, parentString, inArray, paths, importField, goForRules, tempNewRule, arrayIndex, parentFields, setParentFields, arrayName}) => {
@@ -32,6 +33,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
   const [fields , setFields] = useState([])
   const [hovering, setHovering] = useState(false)
   const [deleted, setDeleted] = useState(false)
+  const [color, setColor] = useState("")
   
 
   const handleShowSign = () => {
@@ -48,6 +50,21 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
       handleAddField(null, null, true)
     }
 
+    let tempColor = marginLeft/20;
+
+    if(tempColor == 1 || tempColor == 6){
+      setColor("rgb(255, 55, 92)")
+    }else if(tempColor == 2 || tempColor == 7){
+      setColor("#57deb7")
+    }else if(tempColor == 3 || tempColor == 8){
+      setColor("rgb(255,255,0)")
+    }else if(tempColor == 4 || tempColor == 9){
+      setColor("rgb(255,0,255)")
+    }else if(tempColor == 5 || tempColor == 10){
+      setColor("rgb(255,165,0)")
+    }else{
+      setColor("#000099")
+    }
     
   }, [])
 
@@ -326,6 +343,23 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
   
             
           }
+          {
+            if (e[0] == 8) {
+              tempComponentsArray.push(<IntegerComponent
+                  paths={paths}
+                  parentString={parentString === "" ? e[1] : e[1].charAt(e[1].length-1) === ']' ? parentString : parentString + (e[1].length > 1 ? e[1] : "")}
+                  pathArrayIndex={e[2]}
+                  inArray={0}
+                  newRule={newRule}
+                  marginLeft={marginLeft+20}
+                  signShown={signShown}
+                  showDropdown={showDropdown}
+                  setShowDropDown={setShowDropDown}
+                  handleShowSign={handleShowSign}
+                  setNewRule={setNewRule}
+                />)
+            }
+          }
         })
       }
 
@@ -352,6 +386,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
               onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 1)}
               disabled={entered ? true : false}
               value={importedValue.replace(/[^a-zA-Z0-9_ ]/g, "")}
+              inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
             />
 
             :
@@ -362,9 +397,10 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
               style={{ transform: "translateY(-3px)" }}
               onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, importField ? 1 : 0)}
               disabled={entered ? true : false}
+              inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
             />
       }
-      {" : {"}
+      <span style={{fontSize: "1.5rem",color: `${color}`, fontWeight: "600"}}>{" : {"}</span>
     </Typography>
     <>
     {componentsArray}
@@ -387,6 +423,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
               <MenuItem value={2}>Object Array</MenuItem>
               <MenuItem value={3}>String Array</MenuItem>
               <MenuItem value={4}>Field</MenuItem>
+              <MenuItem value={9}>Integer</MenuItem>
               </TextField>
             </>
               
@@ -429,7 +466,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }}
     >
-      {" }"}
+      <span style={{fontSize: "1.5rem" , color: `${color}`, fontWeight: "600"}}>{" }"}</span>
     </Typography>
     
   </>

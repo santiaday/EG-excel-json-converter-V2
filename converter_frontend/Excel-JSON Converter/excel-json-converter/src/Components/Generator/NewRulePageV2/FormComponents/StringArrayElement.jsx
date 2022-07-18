@@ -153,6 +153,7 @@ setEntered(true)
               style={{ transform: "translateY(-3px)" }}
               onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 1)}
               disabled={entered ? true : false}
+              inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
 
             />
       {" : {"}
@@ -170,6 +171,7 @@ setEntered(true)
                 size="small"
                 label="Type Of Field"
                 style={{ transform: "translateY(-3px)" , minWidth: "150px", marginLeft: `calc(${marginLeft}px + 20px)`}}
+                inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
               > 
               <MenuItem value={1}>String Element</MenuItem>
               </TextField>

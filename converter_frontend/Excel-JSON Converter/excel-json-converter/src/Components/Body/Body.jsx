@@ -12,6 +12,7 @@ import UploadedFile from "./UploadedFiles/UploadedFile";
 import { saveAs } from "file-saver";
 import ConfirmUpdatePopup from "./ConfirmUpdatePopup/ConfirmUpdatePopup";
 import * as JSZip from "jszip";
+import { AiOutlineCloudUpload } from "react-icons/ai"
 
 const Body = ({
   settings,
@@ -748,7 +749,7 @@ const Body = ({
                     }}
                   >
                     <label style={{ textAlign: "center" }} for="files">
-                      <div className={classes.text}>Upload Your Files Here</div>
+                    <AiOutlineCloudUpload style={{fontSize: "50px"}}/>
                       <br />
                       <div className={classes.subText}>
                         Click To Browse Or <br></br>Drag And Drop
@@ -849,7 +850,7 @@ const Body = ({
         )}
       </Dropzone>
 
-      {confirmUpdatePopup == 1 ? <><ConfirmUpdatePopup confirmUpdatePopup={confirmUpdatePopup} handleFileUpload={handleFileUpload} handleSingleFileUpload={handleSingleFileUpload} multipleFiles={1}/></> : <></>}
+      {confirmUpdatePopup == 1 ? <><ConfirmUpdatePopup setConfirmUpdatePopup={setConfirmUpdatePopup} confirmUpdatePopup={confirmUpdatePopup} handleFileUpload={handleFileUpload} handleSingleFileUpload={handleSingleFileUpload} multipleFiles={1}/></> : <></>}
     </Container>
   );
 };

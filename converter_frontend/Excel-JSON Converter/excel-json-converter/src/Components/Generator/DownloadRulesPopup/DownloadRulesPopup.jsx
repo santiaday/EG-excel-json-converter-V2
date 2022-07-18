@@ -13,8 +13,9 @@ import {
 import "./styles.css";
 import { BsArrowRight } from "react-icons/bs";
 import Divider from '@mui/material/Divider';
+import { AiFillCloseCircle } from "react-icons/ai";
 
-const ConfirmUpdatePopup = ({ handleDownloadAllRules}) => {
+const ConfirmUpdatePopup = ({ handleDownloadAllRules , setDownloadRulesPopup }) => {
 
   var JSONPretty = require('react-json-pretty');
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ const ConfirmUpdatePopup = ({ handleDownloadAllRules}) => {
       <div className={classes.toolbar} style={{ marginBottom: "30px" }} />
       <div className="popup-box">
         <div className="box">
+        <AiFillCloseCircle onClick={() => setDownloadRulesPopup(0)} style={{float: "right", cursor: "pointer"}}/>
         <br className={"unselectable"} />
           <Typography variant="h3" style={{ marginBottom: "25px" }}>
             Rule Download Format

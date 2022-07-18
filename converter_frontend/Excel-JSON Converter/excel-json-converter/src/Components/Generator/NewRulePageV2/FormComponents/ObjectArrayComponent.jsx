@@ -151,6 +151,7 @@ const ObjectArrayComponent = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLin
               style={{ transform: "translateY(-3px)" }}
               disabled={entered ? true : false}
               onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 2)}
+              inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
             />
       {" : ["}
     </Typography>
@@ -170,6 +171,7 @@ const ObjectArrayComponent = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLin
                 size="small"
                 label="Type Of Field"
                 style={{ transform: "translateY(-3px)" , minWidth: "150px", marginLeft: `calc(${marginLeft}px + 20px)`}}
+                inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
               > 
               <MenuItem value={1}>Object</MenuItem>
               <MenuItem value={2}>Object Array</MenuItem>

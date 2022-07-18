@@ -110,6 +110,7 @@ const ArrayComponent = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList,
                 size="small"
                 label="Type Of Field"
                 style={{ transform: "translateY(-3px)" , minWidth: "150px", marginLeft: `calc(${marginLeft}px + 20px)`}}
+                inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
               > 
               <MenuItem value={1}>Array Element</MenuItem>
               </TextField>

@@ -8,11 +8,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import { outlinedInputClasses } from "@mui/material/OutlinedInput";
 import { inputLabelClasses } from "@mui/material/InputLabel";
 import { styled } from "@mui/material/styles";
+import "./styles.css"
 
 
 
-
-const FieldComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRule, importField, parentString, setParentString, branchParentString, inArray, arrayIndex, fields, setFields}) => {
+const IntegerComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRule, importField, parentString, setParentString, branchParentString, inArray, arrayIndex, fields, setFields}) => {
 
 
   const ref = useRef()
@@ -181,7 +181,7 @@ const FieldComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRu
               disabled={fieldEntered ? true : false}
               value={importedValue.replace(/[^a-zA-Z0-9_ ]/g, "")}
               inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
-            /> : 
+              /> : 
 
             <TextField
       onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft+20, 4, 0)}
@@ -200,7 +200,7 @@ const FieldComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRu
               style={{ transform: "translateY(-3px)" }}
               disabled={valueEntered || !fieldEntered ? true : false}
               inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
-              
+              type="number"
             />
             {" , "}
     </Typography>
@@ -208,7 +208,7 @@ const FieldComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRu
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }}
-      inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
+      inputProps={{ style: {borderColor: 'white'}}}
     >
       {" "}
     </Typography>
@@ -220,4 +220,4 @@ const FieldComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRu
   );
 };
 
-export default FieldComponent;
+export default IntegerComponent;

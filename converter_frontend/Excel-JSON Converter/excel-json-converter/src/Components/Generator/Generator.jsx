@@ -198,7 +198,7 @@ const Generator = ({ rules, ruleNames, rulesLoaded, ruleCount
 
       <></>}
 
-{downloadRulesPopup == 1 ? <><DownloadRulesPopup handleDownloadAllRules={handleDownloadAllRules}/></> : <></>} 
+{downloadRulesPopup == 1 ? <><DownloadRulesPopup setDownloadRulesPopup={setDownloadRulesPopup} handleDownloadAllRules={handleDownloadAllRules}/></> : <></>} 
 
     </Container>
     

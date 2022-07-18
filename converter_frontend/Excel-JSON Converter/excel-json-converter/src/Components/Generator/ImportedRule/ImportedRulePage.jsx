@@ -20,6 +20,7 @@ import NestedObjectComponent from "./FormComponents/NestedObjectComponent.jsx";
 import ObjectArrayComponent from "./FormComponents/ObjectArrayComponent.jsx";
 import StringArrayElement from "./FormComponents/StringArrayElement.jsx";
 import FieldComponent from "./FormComponents/FieldComponent";
+import IntegerComponent from "./FormComponents/IntegerComponent"
 import RuleUpdateConfirmationPopup from "./RuleUpdateConfirmation/RuleUpdateConfirmationPopup";
 import StringElement from "./FormComponents/StringElement";
 import $ from 'jquery'
@@ -72,6 +73,7 @@ const ImportedRulePage = ({
 
   const [useFunction, setUseFunction] = useState(false);
 
+
   const ref = React.useRef();
   let tempIndex = 0;
 
@@ -85,12 +87,6 @@ const ImportedRulePage = ({
     jsonStruct.map((string) => {
       _.set(tempRule, string, "");
     });
-
-    // if(paths.length == 0){
-    //   let tempPaths = paths;
-    //     tempPaths.push(" ");
-    //     setPaths([...tempPaths]);
-    // }
 
     setRuleTitle(Object.keys(tempRule)[0]);
     if(fields.length == 0){
@@ -206,6 +202,12 @@ const ImportedRulePage = ({
     setRuleUpdatePopup(0);
   };
 
+  function isInt(value) {
+    return !isNaN(value) && 
+           parseInt(Number(value)) == value && 
+           !isNaN(parseInt(value, 10));
+  }
+
   const handleNavigateToManager = () => {
     navigate("/generator", {
       state: { rules: rules, ruleNames: ruleNames },
@@ -218,6 +220,7 @@ const ImportedRulePage = ({
 
     if (importSignal && fields.length == 0) {
       Object.entries(newRule[Object.keys(newRule)[0]]).map((key) => {
+        console.log(key)
         if (Array.isArray(key[1]) && typeof key[1][0] === "object") {
           tempFields.push([5, "." + key[0], tempFields.length]);
         } else if (!Array.isArray(key[1]) && typeof key[1] === "object") {
@@ -226,7 +229,7 @@ const ImportedRulePage = ({
           tempFields.push([6, "." + key[0], tempFields.length]);
         } else if (!Array.isArray(key[1]) && typeof key[1] === "string") {
           tempFields.push([7, "." + key[0], tempFields.length]);
-        }
+        } 
         setFields([...tempFields]);
         setCounter(counter)
       });
@@ -412,6 +415,24 @@ const ImportedRulePage = ({
 
           
         }
+        {
+          if (e[0] == 8) {
+            tempComponentsArray.push(<IntegerComponent
+                paths={paths}
+                parentString={""}
+                pathArrayIndex={e[2]}
+                inArray={0}
+                newRule={newRule}
+                marginLeft={20}
+                signShown={signShown}
+                showDropdown={showDropdown}
+                setShowDropDown={setShowDropDown}
+                handleShowSign={handleShowSign}
+                setNewRule={setNewRule}
+                setTempNewRule={setTempNewRule}
+              />)
+          }
+        }
       })
     }
     setComponentsArray([...tempComponentsArray])
@@ -479,21 +500,13 @@ const ImportedRulePage = ({
           onKeyPress={(e) => handleChangeRuleTitle(e, e.target.value)}
           variant="outlined"
           size="small"
-          style={{ transform: "translateY(-3px)" }}
+          style={{ transform: "translateY(-3px)"}}
           disabled={titleEntered ? true : false}
+          inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
         />
-        {" {"}
+        <span style={{fontSize: "1.5rem", color: "#000099", fontWeight: "600"}}>{" {"}</span>
       </Typography>
 
-      {/*//   <>
-      //   <>
-      //   {Object.entries(tempNewRule[Object.keys(tempNewRule)[0]]).map((key) => 
-      //   <>{goForRules ? renderComponents(key) : <></>}
-      //   </>
-        
-
-      //   )}
-      //  </> */}
       {componentsArray.length > 0 ? (
         <>
          {componentsArray}
@@ -520,6 +533,7 @@ const ImportedRulePage = ({
                   <MenuItem value={2}>Object Array</MenuItem>
                   <MenuItem value={3}>String Array</MenuItem>
                   <MenuItem value={4}>Field</MenuItem>
+                  <MenuItem value={9}>Integer</MenuItem>
                 </TextField>
               </>
             ) : (
@@ -572,7 +586,7 @@ const ImportedRulePage = ({
           )}
 
           <Typography variant="h6" style={{ marginBottom: "10px" }}>
-            {" }"}
+          <span style={{fontSize: "1.5rem", color: "#000099", fontWeight: "600"}}>{" }"}</span>
           </Typography>
         </>
       ) : (
@@ -580,7 +594,7 @@ const ImportedRulePage = ({
       )}
 
       <Typography style={{ fontSize: "30px", marginTop: "20px" }} inline>
-        <Button className={classes.altButton}>
+        <Button className={classes.altButton} onClick={() => handleNavigateToManager()}>
           <div style={{ transform: "translateY(2px)" }}>Go Back</div>
         </Button>
         {titleEntered ? (

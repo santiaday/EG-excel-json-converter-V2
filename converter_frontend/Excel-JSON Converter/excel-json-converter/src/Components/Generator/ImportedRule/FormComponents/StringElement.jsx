@@ -116,6 +116,7 @@ const StringElement = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, 
               size="small"
               style={{ transform: "translateY(-3px)" }}
               disabled={fieldEntered ? true : false}
+              inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
             />
             {" , "}
     </Typography>
@@ -123,6 +124,7 @@ const StringElement = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, 
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }}
+      inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
     >
       {" "}
     </Typography>

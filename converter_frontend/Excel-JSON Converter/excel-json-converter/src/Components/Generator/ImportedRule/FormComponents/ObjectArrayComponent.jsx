@@ -15,6 +15,7 @@ import FieldComponent from "./FieldComponent"
 import StringArrayElement from "./StringArrayElement";
 import StringElement from "./StringElement";
 import $ from 'jquery'
+import IntegerComponent from "./IntegerComponent";
 
 const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule, parentString, setParentString, inArray , importField, tempNewRule, paths, arrayIndex, goForRules, parentFields, setParentFields}) => {
 
@@ -32,6 +33,7 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
   const [componentsArray, setComponentsArray] = useState([])
   const [deleted, setDeleted] = useState(false)
   const [hovering, setHovering] = useState(false)
+  const [color, setColor] = useState("")
   let _ = require('lodash');
 
 
@@ -50,6 +52,22 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
     if(importField && importField.length > 0){
       setEntered(true)
       handleAddField(null, null, true)
+    }
+
+    let tempColor = marginLeft/20;
+
+    if(tempColor == 1 || tempColor == 6){
+      setColor("rgb(255, 55, 92)")
+    }else if(tempColor == 2 || tempColor == 7){
+      setColor("#57deb7")
+    }else if(tempColor == 3 || tempColor == 8){
+      setColor("rgb(255,255,0)")
+    }else if(tempColor == 4 || tempColor == 9){
+      setColor("rgb(255,0,255)")
+    }else if(tempColor == 5 || tempColor == 10){
+      setColor("rgb(255,165,0)")
+    }else{
+      setColor("#000099")
     }
 
   }, [])
@@ -377,6 +395,28 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
   
             
           }
+          {
+            if (e[0] == 8) {
+              console.log(e[1])
+              tempComponentsArray.push(<IntegerComponent
+                  paths={paths}
+                  parentString={parentString === "" ? e[1] : e[1].charAt(e[1].length-1) === ']' ? parentString : parentString + (e[1].length > 1 ? e[1] : "")}
+                  pathArrayIndex={e[2]}
+                  inArray={1}
+                  newRule={newRule}
+                  marginLeft={marginLeft+20}
+                  signShown={signShown}
+                  showDropdown={showDropdown}
+                  setShowDropDown={setShowDropDown}
+                  handleShowSign={handleShowSign}
+                  setNewRule={setNewRule}
+                  arrayIndex={e[2]}
+                  fields={fields}
+                  setFields={setFields}
+                />)
+            }
+          }
+          
         })
       }
       setComponentsArray([...tempComponentsArray])
@@ -405,6 +445,7 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
               disabled={entered ? true : false}
               onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 2)}
               value={importedValue.replace(/[^a-zA-Z0-9_ ]/g, "")}
+              inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
             /> : 
             
             <TextField
@@ -413,8 +454,9 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
               style={{ transform: "translateY(-3px)" }}
               disabled={entered ? true : false}
               onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 2)}
+              inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
             />}
-      {" : ["}
+      <span style={{fontSize: "1.5rem" , color: `${color}`, fontWeight: "600"}}>{" : ["}</span>
     </Typography>
 
   
@@ -438,6 +480,7 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
         <MenuItem value={2}>Object Array</MenuItem>
         <MenuItem value={3}>String Array</MenuItem>
         <MenuItem value={4}>Field</MenuItem>
+        <MenuItem value={9}>Integer</MenuItem>
         
         </TextField>
       </> 
@@ -481,7 +524,7 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }}
     >
-      {" ]"}
+      <span style={{fontSize: "1.5rem" , color: `${color}`, fontWeight: "600"}}>{" ]"}</span>
     </Typography>
     
   </>
