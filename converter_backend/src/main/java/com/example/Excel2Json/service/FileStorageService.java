@@ -72,7 +72,7 @@ public class FileStorageService {
 
     public Resource loadRuleAsResource(String fileName) {
         try {
-            Path filePath = Paths.get("C:\\Users\\saaday\\Documents\\EG_JSON-Excel-Converter\\converter_backend\\rulesStorage\\" + fileName);
+            Path filePath = Paths.get("C:\\Users\\santi\\Documents\\EG_JSON-Excel-Converter\\converter_backend\\rulesStorage\\" + fileName);
             Resource resource = new UrlResource(filePath.toUri());
             if(resource.exists()) {
                 System.out.println("File found");
