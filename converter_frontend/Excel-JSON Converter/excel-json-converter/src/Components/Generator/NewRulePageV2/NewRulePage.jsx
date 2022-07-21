@@ -17,9 +17,10 @@ import FieldComponent from "./FormComponents/FieldComponent"
 import RuleUpdateConfirmationPopup from "./RuleUpdateConfirmation/RuleUpdateConfirmationPopup";
 import FileUploadPopup from "./FileUploadPopup/FileUploadPopup.jsx"
 import produce from "immer";
+import IntegerComponent from "./FormComponents/IntegerComponent";
 
 
-const NewRulePage = ({ newRule , setNewRule}) => {
+const NewRulePage = ({ newRule , setNewRule , setCounter, counter}) => {
   const ref = React.useRef()
 
   const location = useLocation();
@@ -46,58 +47,9 @@ const NewRulePage = ({ newRule , setNewRule}) => {
   const [pathArrayIndex , setPathArrayIndex] = useState(0)
   const [useFunction , setUseFunction] = useState(false)
   const [tempRule , setTempRule] = useState();
-  const [lineListSignShown, setLineListSignShown] = useState([
-    [
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-    ],
-    [
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-    ],
-    [
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-    ],
-    [
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-      { lineListShown: false },
-    ],
-  ]);
+  const [componentsArray, setComponentsArray] = useState([])
   
-  const [fields , setFields] = useState([0, 0, 0, 0])
+  const [fields , setFields] = useState([])
 
   const [newObjectField , setNewObjectField] = useState("");
   const [fileUploadPopup , setFileUploadPopup] = useState(0)
@@ -276,25 +228,15 @@ const NewRulePage = ({ newRule , setNewRule}) => {
   }
 
   const handleAddField = (fieldType , level) => {
-    level = ((level.substring(0, level.length-2)) / 20) - 1
+    let tempFields = fields;
+    let tempCounter = counter;
+    level = level.substring(0, level.length - 2) / 20 - 1;
     fieldType = fieldType - 1;
 
-    console.log(fieldType);
-    console.log(level);
+    tempFields.push([fieldType, , tempFields.length]);
 
-    let tempPathIndex = pathArrayIndex
-    tempPathIndex++;
-    setPathArrayIndex(tempPathIndex)
-    
-    let tempPaths = cloneDeep(paths)
-    paths.push("")
-    setPaths(tempPaths)
-
-    var tempFields = cloneDeep(fields);
-
-    tempFields[fieldType] = tempFields[fieldType] + 1
-
-    setFields(tempFields);
+    setFields([...tempFields]);
+    setCounter(tempCounter)
     setShowDropDown(0);
     setSignShown(0);
 
@@ -304,6 +246,107 @@ const NewRulePage = ({ newRule , setNewRule}) => {
     const handleChooseImportFile = () => {
       setFileUploadPopup(1)
     }
+
+
+
+
+    useEffect(() => {
+      let tempComponentsArray=[]
+      if(titleEntered && newRule != null ){
+        console.log(fields)
+        fields.map((e, i) => {
+          {
+            if (e[0] == 0) {
+            
+              tempComponentsArray.push(<NestedObjectComponent
+                  paths={paths}
+                  parentString={""}
+                  pathArrayIndex={e[2]}
+                  inArray={0}
+                  newRule={newRule}
+                  marginLeft={20}
+                  signShown={signShown}
+                  showDropdown={showDropdown}
+                  setShowDropDown={setShowDropDown}
+                  handleShowSign={handleShowSign}
+                  setNewRule={setNewRule}
+                />)
+            }
+          }
+          {
+            if (e[0] == 1) {
+              tempComponentsArray.push(<ObjectArrayComponent
+                  paths={paths}
+                  parentString={""}
+                  pathArrayIndex={e[2]}
+                  inArray={0}
+                  newRule={newRule}
+                  marginLeft={20}
+                  signShown={signShown}
+                  showDropdown={showDropdown}
+                  setShowDropDown={setShowDropDown}
+                  handleShowSign={handleShowSign}
+                  setNewRule={setNewRule}
+                />)
+            }
+          }
+          {
+            if (e[0] == 2) {
+              tempComponentsArray.push(<StringArrayElement
+                  paths={paths}
+                  parentString={""}
+                  pathArrayIndex={e[2]}
+                  inArray={0}
+                  newRule={newRule}
+                  marginLeft={20}
+                  signShown={signShown}
+                  showDropdown={showDropdown}
+                  setShowDropDown={setShowDropDown}
+                  handleShowSign={handleShowSign}
+                  setNewRule={setNewRule}
+                />)
+            }
+          }
+          {
+            if (e[0] == 3) {
+              tempComponentsArray.push(<FieldComponent
+                  paths={paths}
+                  parentString={""}
+                  pathArrayIndex={e[2]}
+                  inArray={0}
+                  newRule={newRule}
+                  marginLeft={20}
+                  signShown={signShown}
+                  showDropdown={showDropdown}
+                  setShowDropDown={setShowDropDown}
+                  handleShowSign={handleShowSign}
+                  setNewRule={setNewRule}
+                />)
+            }
+          }
+          {
+            if (e[0] == 8) {
+              tempComponentsArray.push(<IntegerComponent
+                  paths={paths}
+                  parentString={""}
+                  pathArrayIndex={e[2]}
+                  inArray={0}
+                  newRule={newRule}
+                  marginLeft={20}
+                  signShown={signShown}
+                  showDropdown={showDropdown}
+                  setShowDropDown={setShowDropDown}
+                  handleShowSign={handleShowSign}
+                  setNewRule={setNewRule}
+                />)
+            }
+          }
+        })
+      }
+      setComponentsArray([...tempComponentsArray])
+  
+    }, [newRule, fields])
+  
 
 
 
@@ -344,17 +387,13 @@ const NewRulePage = ({ newRule , setNewRule}) => {
           disabled={titleEntered ? true : false}
           inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
         />
-        {" : {"}
+        <span style={{fontSize: "1.5rem", color: "#000099", fontWeight: "600"}}>{" {"}</span>
       </Typography>
 
-      {[...Array(fields[0])].map((e, i) => <NestedObjectComponent paths={paths} parentString={paths[pathArrayIndex]} pathArrayIndex={pathArrayIndex} inArray={0} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[1])].map((e, i) => <ObjectArrayComponent paths={paths} parentString={paths[pathArrayIndex]} pathArrayIndex={pathArrayIndex} inArray={0} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[2])].map((e, i) => <StringArrayElement paths={paths} inArray={0} parentString={paths[pathArrayIndex]} newRule={newRule} marginLeft={0} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-      {[...Array(fields[3])].map((e, i) => <FieldComponent paths={paths} inArray={0} parentString={paths[pathArrayIndex]} newRule={newRule} marginLeft={20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
-
         <>
-
+      {componentsArray.length > 0 || titleEntered ? 
         <>
+        {componentsArray}
                 {showDropdown ? 
                 <>
             <TextField
@@ -371,6 +410,7 @@ const NewRulePage = ({ newRule , setNewRule}) => {
               <MenuItem value={2}>Object Array</MenuItem>
               <MenuItem value={3}>String Array</MenuItem>
               <MenuItem value={4}>Field</MenuItem>
+              <MenuItem value={9}>Integer</MenuItem>
               </TextField>
             </>
               
@@ -403,15 +443,15 @@ const NewRulePage = ({ newRule , setNewRule}) => {
 
             }
 
-            </>
+            </> : <></>}
 
           
           <Typography variant="h6" style={{ marginBottom: "10px" }}>
-        {" }"}
+          <span style={{fontSize: "1.5rem", color: "#000099", fontWeight: "600"}}>{" }"}</span>
       </Typography> 
           
-          {ruleUpdatePopup == 1 ? <RuleUpdateConfirmationPopup clean={clean} rules={rules} ruleTitle={ruleTitle} newRule={clean(newRule)} setRuleUpdatePopup={setRuleUpdatePopup} ruleUpdatePopup={1} handleStoreRule={handleStoreRule} ruleNames={ruleNames}  handleDownloadRule={handleDownloadRule}/> : 
-          ruleUpdatePopup == 2 ? <RuleUpdateConfirmationPopup clean={clean} ruleNames={ruleNames} setRuleUpdatePopup={setRuleUpdatePopup} ruleUpdatePopup={2} rules={rules} ruleTitle={ruleTitle} newRule={clean(newRule)} handleStoreRule={handleStoreRule} handleDownloadRule={handleDownloadRule}/> : <></>}
+          {ruleUpdatePopup == 1 ? <RuleUpdateConfirmationPopup  setUseFunction={setUseFunction} useFunction={useFunction} clean={clean} rules={rules} ruleTitle={ruleTitle} newRule={newRule} setRuleUpdatePopup={setRuleUpdatePopup} ruleUpdatePopup={1} handleStoreRule={handleStoreRule} ruleNames={ruleNames}  handleDownloadRule={handleDownloadRule}/> : 
+          ruleUpdatePopup == 2 ? <RuleUpdateConfirmationPopup setUseFunction={setUseFunction} useFunction={useFunction} clean={clean} ruleNames={ruleNames} setRuleUpdatePopup={setRuleUpdatePopup} ruleUpdatePopup={2} rules={rules} ruleTitle={ruleTitle} newRule={newRule} handleStoreRule={handleStoreRule} handleDownloadRule={handleDownloadRule}/> : <></>}
         </>
 
       <Typography style={{ fontSize: "30px", marginTop: "20px" }} inline>

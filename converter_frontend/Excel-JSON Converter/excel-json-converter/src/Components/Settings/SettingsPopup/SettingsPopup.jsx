@@ -12,6 +12,14 @@ import {
 } from "@material-ui/core";
 import "./styles.css";
 import { BsArrowRight } from "react-icons/bs";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js';
+import $ from 'jquery';
+import Popper from 'popper.js';           
 
 const SettingsPopup = ({
   handleSetSettings,
@@ -130,12 +138,43 @@ const SettingsPopup = ({
           </Typography>
           <br className={"unselectable"} />
 
-          <Button onClick={handleSaveChanges} className={classes.button}>
+          {/* <Button onClick={handleSaveChanges} className={classes.button}>
             <span style={{ transform: "translateY(2px)" }}>Save Changes</span>
           </Button>
           <Button onClick={handleRevertChanges} className={classes.altButton}>
             <span style={{ transform: "translateY(2px)" }}>Revert Changes</span>
-          </Button>
+          </Button> */}
+          <DropdownButton
+            onClick={(e) => console.log(e.currentTarget)}
+            drop="down"
+            id="dropdown-button-drop-down"
+            title="UPDATE"
+            style={{
+              transform: "translate(-15px , 0px)",
+              minWidth: "200px",
+              marginLeft: "20px",
+              marginTop: "30px",
+            }}
+          >
+            <Dropdown.Item
+              as="button"
+              onClick={() =>
+                 handleSaveChanges()
+              }
+              value={1}
+            >
+              Save Changes
+            </Dropdown.Item>
+            <Dropdown.Item
+              as="button"
+              onClick={() =>
+                handleRevertChanges()
+             }
+              value={2}
+            >
+              Revert Changes
+            </Dropdown.Item>
+          </DropdownButton>
         </div>
       </div>
     </Container>

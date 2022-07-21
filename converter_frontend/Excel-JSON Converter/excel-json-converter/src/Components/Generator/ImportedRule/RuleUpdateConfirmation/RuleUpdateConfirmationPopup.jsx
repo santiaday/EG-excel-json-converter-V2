@@ -16,7 +16,7 @@ import Divider from '@mui/material/Divider';
 import { AiFillCloseCircle } from "react-icons/ai"
 
 const RuleUpdateConfirmationPopup = ({
-rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup ,ruleNames , handleDownloadRule, clean}) => {
+rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup ,ruleNames , handleDownloadRule, clean, setUseFunction}) => {
 
   const[existingRuleIndex , setExistingRuleIndex] = useState(-1)
 
@@ -79,7 +79,8 @@ rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup
       <div className={classes.toolbar} style={{ marginBottom: "30px" }} />
       <div className="popup-box">
         <div className="box">
-        <AiFillCloseCircle onClick={() => setRuleUpdatePopup(0)} style={{float: "right", cursor: "pointer"}}/>
+        <AiFillCloseCircle onClick={() => {setRuleUpdatePopup(0)
+                                          setUseFunction(0)}} style={{float: "right", cursor: "pointer"}}/>
         <br className={"unselectable"} />
         {ruleUpdatePopup == 1 ? 
         

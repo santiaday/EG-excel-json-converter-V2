@@ -14,9 +14,11 @@ import ObjectArrayComponent from "./ObjectArrayComponent";
 import FieldComponent from "./FieldComponent"
 import NestedObjectComponent from "./NestedObjectComponent";
 import StringElement from "./StringElement";
+import "./styles.css"
+import { MdExpandMore } from "react-icons/md"
 
 
-const StringArrayElement = ({ newRule, marginLeft, setNewRule, parentString, setParentString, inArray, importField, goForRules, tempNewRule, paths, arrayIndex, parentFields, setParentFields}) => {
+const StringArrayElement = ({ newRule, marginLeft, setNewRule, parentString, setParentString, inArray, importField, goForRules, tempNewRule, paths, arrayIndex, parentFields, setParentFields, signal}) => {
 
 
 const ref = useRef()
@@ -34,6 +36,7 @@ const [fields , setFields] = useState([])
 const [color, setColor] = useState("")
 const [deleted, setDeleted] = useState(false)
 const [hovering, setHovering] = useState(false)
+const [collapsed, setCollapsed] = useState(false)
 
 let _ = require('lodash');
 
@@ -277,6 +280,9 @@ useEffect(() => {
 
 {!deleted ?
     <>
+    <span style={{position: "absolute" ,transform: "translateY(10px)", marginLeft:  `calc(${marginLeft}px)`, cursor: "pointer"}}>
+        <MdExpandMore id="containerExpanded" onClick={() => setCollapsed(!collapsed)} className={collapsed ? "containerCollapsed" : "containerExpanded" } />
+      </span>
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `calc(${marginLeft}px + 20px)` }}
@@ -309,7 +315,8 @@ useEffect(() => {
       <span style={{fontSize: "1.5rem" , color: `${color}`, fontWeight: "600"}}>{" : ["}</span>
     </Typography>
 
-  
+    {!collapsed ? 
+    <>
     <>
     {componentsArray}
     </>
@@ -366,6 +373,7 @@ useEffect(() => {
 
 
             }
+            </> : <></>}
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }}

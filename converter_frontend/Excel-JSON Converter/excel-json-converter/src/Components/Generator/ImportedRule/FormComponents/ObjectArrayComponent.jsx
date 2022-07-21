@@ -16,8 +16,10 @@ import StringArrayElement from "./StringArrayElement";
 import StringElement from "./StringElement";
 import $ from 'jquery'
 import IntegerComponent from "./IntegerComponent";
+import { MdExpandMore  } from "react-icons/md"
+import "./styles.css"
 
-const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule, parentString, setParentString, inArray , importField, tempNewRule, paths, arrayIndex, goForRules, parentFields, setParentFields}) => {
+const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule, parentString, setParentString, inArray , importField, tempNewRule, paths, arrayIndex, goForRules, parentFields, setParentFields, signal, jsonText}) => {
 
 
   const ref = useRef()
@@ -34,6 +36,7 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
   const [deleted, setDeleted] = useState(false)
   const [hovering, setHovering] = useState(false)
   const [color, setColor] = useState("")
+  const [collapsed, setCollapsed] = useState(false)
   let _ = require('lodash');
 
 
@@ -321,6 +324,8 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
                   arrayIndex={e[2]}
                   parentFields={fields}
                   setParentFields={setFields}
+                  signal={signal}
+                  jsonText={jsonText}
                 />)
             }
           }
@@ -344,6 +349,8 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
                   arrayIndex={e[2]}
                   parentFields={fields}
                   setParentFields={setFields}
+                  signal={signal}
+                  jsonText={jsonText}
                 />)
             }
           }
@@ -367,6 +374,8 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
                   arrayIndex={e[2]}
                   parentFields={fields}
                   setParentFields={setFields}
+                  signal={signal}
+                  jsonText={jsonText}
                 />)
             }
           }
@@ -390,6 +399,8 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
                   arrayIndex={e[2]}
                   parentFields={fields}
                   setParentFields={setFields}
+                  signal={signal}
+                  jsonText={jsonText}
                 />)
             }
   
@@ -427,6 +438,9 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
     <>
     {!deleted ?
     <>
+    <span style={{position: "absolute" ,transform: "translateY(10px)", marginLeft:  `calc(${marginLeft}px)`, cursor: "pointer"}}>
+        <MdExpandMore id="containerExpanded" onClick={() => setCollapsed(!collapsed)} className={collapsed ? "containerCollapsed" : "containerExpanded" } />
+      </span>
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `calc(${marginLeft}px + 20px)` }}
@@ -459,7 +473,8 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
       <span style={{fontSize: "1.5rem" , color: `${color}`, fontWeight: "600"}}>{" : ["}</span>
     </Typography>
 
-  
+    {!collapsed ? 
+    <>
     <>
     {componentsArray}
     </>
@@ -520,6 +535,7 @@ const ObjectArrayComponent = ({ newRule, pathArrayIndex, marginLeft, setNewRule,
 
 
             }
+            </> : <></>}
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }}

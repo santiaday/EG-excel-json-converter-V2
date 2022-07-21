@@ -14,7 +14,7 @@ import ObjectArrayComponent from "./ObjectArrayComponent";
 import NestedObjectComponent from "./NestedObjectComponent";
 
 const StringElement = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, handleAddRuleLineListObject, 
-                                  handleShowLineListSign, lineListSignShown, ruleLineListIndex, ruleListIndex, listCounters, marginLeft, setNewRule, parentString, setParentString, branchParentString, inArray}) => {
+                                  handleShowLineListSign, lineListSignShown, ruleLineListIndex, ruleListIndex, listCounters, marginLeft, setNewRule, parentString, setParentString, branchParentString, inArray, arrayIndex}) => {
 
 
   const ref = useRef()
@@ -29,6 +29,9 @@ const StringElement = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, 
   const [fields , setFields] = useState([0, 0, 0, 0])
   const [level1Fields, setLevel1Fields] = useState(fields[0])
   const [valueEntered , setValueEntered] = useState(false)
+  const [deleted, setDeleted] = useState(false)
+const [hovering, setHovering] = useState(false)
+const [collapsed, setCollapsed] = useState(false)
 
   const handleShowSign = () => {
     if (signShown) {
@@ -81,22 +84,42 @@ const StringElement = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, 
       }
 }
 
-  const handleAddField = (fieldType , level) => {
-    level = ((level.substring(0, level.length-2)) / 20) - 1
-    fieldType = fieldType - 1;
+const handleAddField = (fieldType , level) => {
+  level = ((level.substring(0, level.length-2)) / 20) - 1
+  fieldType = fieldType - 1;
 
-    console.log(fieldType);
-    console.log(level);
-    console.log("UP HGEREEEEEEEEEEEEEEE")
+  var tempFields = cloneDeep(fields);
 
-    var tempFields = cloneDeep(fields);
+  tempFields[fieldType] = tempFields[fieldType] + 1
 
-    tempFields[fieldType] = tempFields[fieldType] + 1
+  setFields(tempFields);
+  setShowDropDown(0);
+  setSignShown(0);
+  }
 
-    setFields(tempFields);
-    setShowDropDown(0);
-    setSignShown(0);
+  const handleRemoveField = () => {
+      
+
+    if(inArray){
+      let tempRule = {...newRule}
+      let tempFields = [...fields]
+      tempFields.splice(arrayIndex,1)
+
+      let tempArray = _.get(tempRule , Object.keys(newRule)[0] + parentString)
+      tempArray.splice(arrayIndex, 1)
+      setDeleted(true)
+      setNewRule(tempRule)
+      setFields([...tempFields])
+        
     }
+    
+    if(!inArray){
+      let tempRule = {...newRule}
+      _.unset(tempRule, Object.keys(newRule)[0] + parentString)
+      setDeleted(true)
+      setNewRule(tempRule)
+    }
+  }
 
   return (
     <>
@@ -105,6 +128,10 @@ const StringElement = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, 
       style={{ marginBottom: "10px", marginLeft: `calc(${marginLeft}px + 20px)` }}
       inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
     >
+      <span onMouseEnter={() => setHovering(true)} onMouseLeave={()=> setHovering(false)} onClick={() => handleRemoveField()}><svg style={{marginRight: "8px", cursor: "pointer"}} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" 
+      xmlns="http://www.w3.org/2000/svg" >
+        <path fill={hovering ? "rgba(255, 55, 92, 1)" : "rgba(255, 55, 92, 0.2)"} stroke="rgb(255, 255, 255)" strokeWidth="2" d="M12,22 C17.5228475,22 22,17.5228475 22,12 C22,6.4771525 17.5228475,2 12,2 C6.4771525,2 2,6.4771525 2,12 C2,17.5228475 6.4771525,22 12,22 Z M6,12 L18,12"></path></svg>
+      </span>
       <TextField
       onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft+20, 4, 0)}
               variant="outlined"

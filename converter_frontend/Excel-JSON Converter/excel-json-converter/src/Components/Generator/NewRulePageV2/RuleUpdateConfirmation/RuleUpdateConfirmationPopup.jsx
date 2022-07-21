@@ -13,9 +13,18 @@ import {
 import "./styles.css";
 import { BsArrowRight } from "react-icons/bs";
 import Divider from '@mui/material/Divider';
+import {AiFillCloseCircle} from "react-icons/ai"
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js';
+import $ from 'jquery';
+import Popper from 'popper.js';
 
 const RuleUpdateConfirmationPopup = ({
-rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup ,ruleNames , handleDownloadRule, clean}) => {
+rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup ,ruleNames , handleDownloadRule, clean, setUseFunction}) => {
 
   const[existingRuleIndex , setExistingRuleIndex] = useState(-1)
 
@@ -82,6 +91,11 @@ rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup
         {ruleUpdatePopup == 1 ? 
         
         <>
+                  <AiFillCloseCircle
+            onClick={() => {setRuleUpdatePopup(0)
+                            setUseFunction(0)}}
+            style={{ float: "right", cursor: "pointer" }}
+          />
           <Typography variant="h3" style={{ marginBottom: "20px" }}>
             Confirm Rule Update?
           </Typography>
@@ -105,17 +119,26 @@ rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup
           </div>
           <br className={"unselectable"} />
 
-          <Button className={classes.button} onClick={handleStoreRule} >
+          {/* <Button className={classes.button} onClick={handleStoreRule} >
             <span style={{ transform: "translateY(2px)" }}>Update Storage</span>
           </Button>
           <Button className={classes.altButton} onClick={handleDownloadRule}>
             <span style={{ transform: "translateY(2px)" }}>Download Only</span>
-          </Button>
+          </Button> */}
+                    <DropdownButton  drop="down" id="dropdown-button-drop-down" title="IMPORT" style={{ transform: "translate(-15px , -45px)" , minWidth: "200px", marginLeft: "20px", marginTop: "30px"}}>
+            <Dropdown.Item as="button" onClick={() => handleStoreRule() } value={1}>Download And Update Storage</Dropdown.Item>
+            <Dropdown.Item as="button" onClick={() => handleDownloadRule() } value={2}>Just Download</Dropdown.Item>
+          </DropdownButton>
           </>
         
         : ruleUpdatePopup == 2 ? 
         
         <>
+                  <AiFillCloseCircle
+            onClick={() => {setRuleUpdatePopup(0)
+                            setUseFunction(0)}}
+            style={{ float: "right", cursor: "pointer" }}
+          />
           <Typography variant="h3" style={{ marginBottom: "20px" }}>
             Confirm Rule Storage Update?
           </Typography>
@@ -132,14 +155,19 @@ rules, ruleTitle, newRule , ruleUpdatePopup, handleStoreRule, setRuleUpdatePopup
           </div>
           <br className={"unselectable"} />
 
-          <Button className={classes.button} onClick={() => {handleStoreRule();
+          {/* <Button className={classes.button} onClick={() => {handleStoreRule();
                                                             handleNavigateRuleManager();}}>
             <span style={{ transform: "translateY(2px)" }}>Yes</span>
           </Button>
           <Button className={classes.altButton} onClick={() => {handleNavigateToNewRule();
                                                                 handleDownloadRule(newRule);}}>
             <span style={{ transform: "translateY(2px)" }}>No</span>
-          </Button>
+          </Button> */}
+
+<DropdownButton  drop="down" id="dropdown-button-drop-down" title="UPDATE" style={{ transform: "translate(-15px)" , minWidth: "200px", marginLeft: "20px", marginTop: "30px"}}>
+            <Dropdown.Item as="button" onClick={() => handleStoreRule() } value={1}>Download And Update Storage</Dropdown.Item>
+            <Dropdown.Item as="button" onClick={() => handleDownloadRule() } value={2}>Just Download</Dropdown.Item>
+          </DropdownButton>
           </>
 
           : 

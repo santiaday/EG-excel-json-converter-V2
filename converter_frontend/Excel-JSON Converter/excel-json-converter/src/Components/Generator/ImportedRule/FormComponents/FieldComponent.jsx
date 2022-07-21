@@ -12,7 +12,7 @@ import { styled } from "@mui/material/styles";
 
 
 
-const FieldComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRule, importField, parentString, setParentString, branchParentString, inArray, arrayIndex, fields, setFields}) => {
+const FieldComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRule, importField, parentString, setParentString, branchParentString, inArray, arrayIndex, fields, setFields, signal, jsonText}) => {
 
 
   const ref = useRef()
@@ -200,7 +200,7 @@ const FieldComponent = ({ newRule, goForRules, tempNewRule, marginLeft, setNewRu
               style={{ transform: "translateY(-3px)" }}
               disabled={valueEntered || !fieldEntered ? true : false}
               inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
-              
+              defaultValue={signal === 2 ? _.get(jsonText , Object.keys(jsonText)[0] + parentString) : ""}
             />
             {" , "}
     </Typography>

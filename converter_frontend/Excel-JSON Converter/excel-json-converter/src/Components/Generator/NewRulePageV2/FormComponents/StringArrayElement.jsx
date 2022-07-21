@@ -14,10 +14,11 @@ import ObjectArrayComponent from "./ObjectArrayComponent";
 import FieldComponent from "./FieldComponent"
 import NestedObjectComponent from "./NestedObjectComponent";
 import StringElement from "./StringElement";
+import "./styles.css"
+import { MdExpandMore } from "react-icons/md"
 
 
-const StringArrayElement = ({ newRule, handleRuleUpdate, ruleTitle, maxRuleLineList, handleAddRuleLineListObject, 
-  handleShowLineListSign, lineListSignShown, ruleLineListIndex, ruleListIndex, listCounters, marginLeft, setNewRule, parentString, setParentString, inArray}) => {
+const StringArrayElement = ({ newRule, marginLeft, setNewRule, parentString, setParentString, inArray, importField, goForRules, tempNewRule, paths, arrayIndex, parentFields, setParentFields, signal}) => {
 
 
 const ref = useRef()
@@ -28,8 +29,15 @@ const [parents, setParents] = useState(parentString)
 let tempString = parentString;
 const [thisFieldName, setThisFieldName] = useState("")
 const[index, setIndex] = useState(-1)
+const [importedValue , setImportedValue] = useState(importField ? importField : "")
+const [componentsArray, setComponentsArray] = useState([])
 
-const [fields , setFields] = useState([0, 0, 0, 0])
+const [fields , setFields] = useState([])
+const [color, setColor] = useState("")
+const [deleted, setDeleted] = useState(false)
+const [hovering, setHovering] = useState(false)
+const [collapsed, setCollapsed] = useState(false)
+
 let _ = require('lodash');
 
 
@@ -43,143 +51,313 @@ setSignShown(true);
 };
 
 useEffect(() => {
-console.log(parentString)
+  if(importedValue){
+    setEntered(true)
+  }
+
+
+  let tempColor = marginLeft/20;
+
+  if(tempColor == 1 || tempColor == 6){
+    setColor("rgb(255, 55, 92)")
+  }else if(tempColor == 2 || tempColor == 7){
+    setColor("#57deb7")
+  }else if(tempColor == 3 || tempColor == 8){
+    setColor("rgb(255,255,0)")
+  }else if(tempColor == 4 || tempColor == 9){
+    setColor("rgb(255,0,255)")
+  }else if(tempColor == 5 || tempColor == 10){
+    setColor("rgb(255,165,0)")
+  }else{
+    setColor("#000099")
+  }
 }, [])
+
+
+useEffect(() => {
+  if(importField && importField.length > 0){
+    setEntered(true)
+    handleAddField(null, null, true)
+  }
+
+  let tempColor = marginLeft/20;
+
+  if(tempColor == 1 || tempColor == 6){
+    setColor("rgb(255, 55, 92)")
+  }else if(tempColor == 2 || tempColor == 7){
+    setColor("#57deb7")
+  }else if(tempColor == 3 || tempColor == 8){
+    setColor("rgb(255,255,0)")
+  }else if(tempColor == 4 || tempColor == 9){
+    setColor("rgb(255,0,255)")
+  }else if(tempColor == 5 || tempColor == 10){
+    setColor("rgb(255,165,0)")
+  }else{
+    setColor("#000099")
+  }
+  
+}, [])
+
+const handleRemoveField = () => {
+
+  if(inArray){
+    setDeleted(true)
+    let tempRule = {...newRule}
+    let tempFields = [...parentFields]
+    console.log(parentString)
+    console.log(thisFieldName)
+    _.unset(tempRule, Object.keys(newRule)[0] + (parseInt(parentString.charAt(parentString.length-2)) === arrayIndex ? parentString : parentString + "[" + arrayIndex + "]" + "." + thisFieldName))
+
+  
+    setParentFields(tempFields)
+    
+    setNewRule(tempRule)
+      
+  }
+  
+  if(!inArray){
+    console.log(parentString)
+    console.log(thisFieldName)
+    let tempRule = {...newRule}
+    _.unset(tempRule, Object.keys(newRule)[0] + (parentString.substring(parentString.lastIndexOf('.'), parentString.length) === thisFieldName ? parentString : thisFieldName.length > 0 ? parentString + "." + thisFieldName : parentString))
+    setDeleted(true)
+    setNewRule(tempRule)
+  }
+}
 
 
 
 const handleRuleFieldUpdate = (event,fieldName, level, objectType) => {
-//OBJECTTYPE 1 IS OBJECT
-//OBJECTYPE 2 IS OBJECT ARRAY
-//OBJECTTYPE 3 IS ARRAY
-//OBJECTYPE 4 IS FIELD
+  //OBJECTTYPE 1 IS OBJECT
+  //OBJECTYPE 2 IS OBJECT ARRAY
+  //OBJECTTYPE 3 IS ARRAY
+  //OBJECTYPE 4 IS FIELD
 
-level = (level / 20)
+  level = (level / 20)
 
-var tempRule = cloneDeep(newRule);
+    var tempRule = cloneDeep(newRule);
 
-// tempRule[`${fieldName}`] = tempRule[`${ruleTitle}`];
-// delete tempRule[`${ruleTitle}`];
-// setRuleTitle(name);
-// setTitleEntered(true);
-// setNewRule(tempRule);
-
-
+    // tempRule[`${fieldName}`] = tempRule[`${ruleTitle}`];
+    // delete tempRule[`${ruleTitle}`];
+    // setRuleTitle(name);
+    // setTitleEntered(true);
+    // setNewRule(tempRule);
 
 
-if(event != null){
-if (event.key === "Enter") {
+    
 
-if(inArray){
-console.log(parentString)
-console.log(newRule)
-setIndex( _.get(newRule , Object.keys(newRule)[0] + parentString).length)
-console.log(index)
-
-setThisFieldName(fieldName)
-}else{
-setThisFieldName(fieldName)
-}
+    if(event != null){
+      if (event.key === "Enter") {
 
 
+        if(inArray){
+          console.log(parentString)
+          setIndex( _.get(newRule , Object.keys(newRule)[0] + parentString).length)
+           
+          setThisFieldName(fieldName)
 
+        }else{
 
-console.log(tempString)
-tempString = tempString === undefined ? "." +  fieldName : tempString + "." + fieldName
-console.log(tempString)
-setParents(tempString)
+          setThisFieldName(fieldName)
+        }
 
-var parentChain = tempString.split("..")
+          if(parentString === ""){
+            tempString = "." + fieldName
+          }
 
-if(inArray){
-let tempRule = {...newRule}
-let tempArray = _.get(tempRule, Object.keys(newRule)[0] + parentString)
-console.log(newRule)
-console.log(parentString)
-console.log(tempArray)
-tempArray.push({[fieldName] : []})
-console.log(tempArray)
+          if(inArray){
+            let tempRule = {...newRule}
+            console.log(parentString)
+            console.log(fieldName)
+            let tempArray = _.get(tempRule, Object.keys(newRule)[0] + (parentString === "" ? "." + fieldName : parentString))
+            tempArray.push({[fieldName] : []})
 
-_.set(tempRule, Object.keys(newRule)[0] + parentString, tempArray)
+            _.set(tempRule, Object.keys(newRule)[0] + (parentString === "" ? "." + fieldName : parentString), tempArray)
+                setNewRule(tempRule)
+              
+          }
+          
+          if(!inArray){
+            console.log(fieldName)
+            console.log(arrayIndex)
+            console.log(parentString)
+            let tempRule = {...newRule}
+            _.set(tempRule, Object.keys(newRule)[0] + (parentString === "" ? "." + fieldName : parentString + (parseInt(fieldName.charAt(1)) === arrayIndex ? "" : "." + fieldName)), [])
+            setNewRule(tempRule)
+          }
+        
+        setEntered(true)
 
-setNewRule(tempRule)
+        }
 
-}
+        
+    }
 
-if(!inArray){
-let tempRule = {...newRule}
-_.set(tempRule, Object.keys(newRule)[0] + tempString, [])
-setNewRule(tempRule)
-}
-
-setEntered(true)
-}
-
-
-}
-
-
-
+    
+    
 
 }
 
-  const handleAddField = (fieldType , level) => {
-    level = ((level.substring(0, level.length-2)) / 20) - 1
+const handleAddField = (fieldType, level, importSignal) => {
+  let tempFields = fields;
+  
+  if (importSignal && fields.length == 0) {
+    Object.entries(_.get(newRule, Object.keys(newRule)[0] + parentString)).map((key) => {
+      if (Array.isArray(key[1]) && typeof key[1][0] === "object") {
+        tempFields.push([5, inArray ? "[" + key[0] + "]" : "[" + key[0] + "]", tempFields.length]);
+      } else if (!Array.isArray(key[1]) && typeof key[1] === "object") {
+        tempFields.push([4, inArray ? "[" + key[0] + "]" : "[" + key[0] + "]", tempFields.length]);
+      } else if (Array.isArray(key[1]) && typeof key[1][0] === "string") {
+        tempFields.push([6, inArray ? "[" + key[0] + "]" : "[" + key[0] + "]", tempFields.length]);
+      } else if (!Array.isArray(key[1]) && typeof key[1] === "string") {
+        tempFields.push([7, inArray ? "[" + key[0] + "]" : "[" + key[0] + "]", tempFields.length]);
+      }
+      setFields([...tempFields]);
+    });
+  }
+
+  if (!importSignal) {
+    
+    level = level.substring(0, level.length - 2) / 20 - 1;
     fieldType = fieldType - 1;
 
-    console.log(fieldType);
-    console.log(level);
-    console.log("UP HGEREEEEEEEEEEEEEEE")
+    if(parentString === thisFieldName){
+      tempFields.push([fieldType, "", tempFields.length]);
+    }else{
+      tempFields.push([fieldType, inArray ? (parseInt(parentString.charAt(parentString.length-2)) != arrayIndex ? "[" + arrayIndex + "]" : "") + "." + thisFieldName : parseInt(thisFieldName.charAt(1)) === arrayIndex ? "" : "." + thisFieldName, tempFields.length]);
+    }
 
-    var tempFields = cloneDeep(fields);
-
-    tempFields[fieldType] = tempFields[fieldType] + 1
-
-    setFields(tempFields);
+    setFields([...tempFields]);
     setShowDropDown(0);
     setSignShown(0);
-    }
+  }
+};
+
+
+useEffect(() => {
+
+
+  let tempComponentsArray=[]
+  
+
+  if(newRule != null && fields.length > 0){
+    console.log(tempComponentsArray)
+    console.log(fields)
+    fields.map((e, i) => {
+      {
+        if (e[0] == 0) {
+          tempComponentsArray.push(<StringElement
+              paths={paths}
+              parentString={parentString === "" ? e[1] : e[1].charAt(e[1].length-1) === ']' ? parentString : parentString + (e[1].length > 1 ? e[1] : "")}
+              pathArrayIndex={e[2]}
+              inArray={1}
+              newRule={newRule}
+              marginLeft={marginLeft+20}
+              signShown={signShown}
+              showDropdown={showDropdown}
+              setShowDropDown={setShowDropDown}
+              handleShowSign={handleShowSign}
+              setNewRule={setNewRule}
+              arrayIndex={e[2]}
+            />)
+        }
+      }
+      {
+        if (e[0] == 7) {
+          tempComponentsArray.push(<StringElement
+              paths={paths}
+              importField={e[1]}
+              parentString={parentString === ""? tempString + e[1] : parentString + e[1]}
+              pathArrayIndex={e[2]}
+              inArray={1}
+              newRule={newRule}
+              marginLeft={marginLeft+20}
+              signShown={signShown}
+              showDropdown={showDropdown}
+              setShowDropDown={setShowDropDown}
+              handleShowSign={handleShowSign}
+              setNewRule={setNewRule}
+              setFields={setFields}
+              goForRules={goForRules}
+              arrayIndex={e[2]}
+              parentFields={fields}
+              setParentFields={setFields}
+            />)
+        }
+      }
+    })
+  }
+  setComponentsArray([...tempComponentsArray])
+
+}, [newRule, fields])
 
   return (
     <>
 
-<Typography
+{!deleted ?
+    <>
+    <span style={{position: "absolute" ,transform: "translateY(10px)", marginLeft:  `calc(${marginLeft}px)`, cursor: "pointer"}}>
+        <MdExpandMore id="containerExpanded" onClick={() => setCollapsed(!collapsed)} className={collapsed ? "containerCollapsed" : "containerExpanded" } />
+      </span>
+    <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `calc(${marginLeft}px + 20px)` }}
     >
+
+<span onMouseEnter={() => setHovering(true)} onMouseLeave={()=> setHovering(false)} onClick={() => handleRemoveField()}><svg style={{marginRight: "8px", cursor: "pointer"}} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" 
+      xmlns="http://www.w3.org/2000/svg" >
+        <path fill={hovering ? "rgba(255, 55, 92, 1)" : "rgba(255, 55, 92, 0.2)"} stroke="rgb(255, 255, 255)" strokeWidth="2" d="M12,22 C17.5228475,22 22,17.5228475 22,12 C22,6.4771525 17.5228475,2 12,2 C6.4771525,2 2,6.4771525 2,12 C2,17.5228475 6.4771525,22 12,22 Z M6,12 L18,12"></path></svg>
+      </span>
+
+      {importField ? 
       <TextField
               variant="outlined"
               size="small"
               style={{ transform: "translateY(-3px)" }}
-              onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 1)}
               disabled={entered ? true : false}
+              onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 2)}
+              value={importedValue.replace(/[^a-zA-Z0-9_ ]/g, "")}
               inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
-
-            />
-      {" : {"}
+            /> : 
+            
+            <TextField
+              variant="outlined"
+              size="small"
+              style={{ transform: "translateY(-3px)" }}
+              disabled={entered ? true : false}
+              onKeyPress={(e) => handleRuleFieldUpdate(e, e.target.value, marginLeft, 2)}
+              inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
+            />}
+      <span style={{fontSize: "1.5rem" , color: `${color}`, fontWeight: "600"}}>{" : ["}</span>
     </Typography>
 
-    {[...Array(fields[0])].map((e, i) => <StringElement inArray={1} parentString={tempString === undefined ? "." +  thisFieldName : tempString + (inArray ? "[" + index + "]" + "." + thisFieldName : "." + thisFieldName)}  newRule={newRule} marginLeft={marginLeft+20} signShown={signShown} showDropdown={showDropdown} setShowDropDown={setShowDropDown} handleShowSign={handleShowSign} setNewRule={setNewRule} setFields={setFields}/>)}
+    {!collapsed ? 
+    <>
+    <>
+    {componentsArray}
+    </>
 
     {showDropdown && entered ? 
-                <>
-            <TextField
-                ref={ref}
-                onChange={(e) => handleAddField(e.target.value, ref.current.style.marginLeft) }
-                variant="outlined"
-                select
-                size="small"
-                label="Type Of Field"
-                style={{ transform: "translateY(-3px)" , minWidth: "150px", marginLeft: `calc(${marginLeft}px + 20px)`}}
-                inputProps={{ style: { fontWeight: "700" , fontSize: "16px" } }}
-              > 
-              <MenuItem value={1}>String Element</MenuItem>
-              </TextField>
-            </>
+
+      <>
+      <TextField
+          ref={ref}
+          onChange={(e) => handleAddField(e.target.value, ref.current.style.marginLeft) }
+          variant="outlined"
+          select
+          size="small"
+          label="Type Of Field"
+          style={{ transform: "translateY(-3px)" , minWidth: "150px", marginLeft: `calc(${marginLeft}px + 20px)`}}
+        > 
+        <MenuItem value={1}>String</MenuItem>
+        
+        </TextField>
+      </> 
+                
               
             :
 
-            entered ? 
+            entered ?
 
             <>
             <IoMdAddCircle
@@ -207,20 +385,20 @@ setEntered(true)
 
                     :
 
-                    <>
-                    </>
+                    <></>
 
 
             }
+            </> : <></>}
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }}
     >
-      {" }"}
+      <span style={{fontSize: "1.5rem" , color: `${color}`, fontWeight: "600"}}>{" ]"}</span>
     </Typography>
-
     
-
+  </>
+  : <></>}
     
       
 

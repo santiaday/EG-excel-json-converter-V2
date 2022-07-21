@@ -25,13 +25,6 @@ import RuleUpdateConfirmationPopup from "./RuleUpdateConfirmation/RuleUpdateConf
 import StringElement from "./FormComponents/StringElement";
 import $ from 'jquery'
 
-function useForceUpdate() {
-  const [value, setValue] = useState(0); // integer state
-  return () => setValue((value) => value + 1); // update state to force render
-  // An function that increment 👆🏻 the previous state like here
-  // is better than directly setting `value + 1`
-}
-
 const ImportedRulePage = ({
   jsonStructure,
   counter,
@@ -41,23 +34,16 @@ const ImportedRulePage = ({
   setRuleSignal,
 }) => {
   const location = useLocation();
+  let signal = location.state.signal;
   const classes = useStyles();
   const [titleEntered, setTitleEntered] = useState(false);
   const [ruleTitle, setRuleTitle] = useState();
   const [ruleUpdatePopup, setRuleUpdatePopup] = useState(0);
   const [goForRules, setGoForRules] = useState(true);
-  const [listCounters, setRuleListCounters] = useState({
-    rule_list: 0,
-    rule_line_list: [
-      { rule_list_index: 0, rule_line_list_count: 0, max: false },
-      { rule_list_index: 1, rule_line_list_count: 0, max: false },
-      { rule_list_index: 2, rule_line_list_count: 0, max: false },
-      { rule_list_index: 3, rule_line_list_count: 0, max: false },
-    ],
-  });
   const [signShown, setSignShown] = useState(false);
   const [pathArrayIndex, setPathArrayIndex] = useState(0);
   let arrayIndex = 0;
+  let jsonText = location.state.jsonText;
   const [maxRuleList, setMaxRuleList] = useState(false);
   const [maxRuleLineList, setMaxRuleLineList] = useState(false);
   const [newRule, setNewRule] = useState({});
@@ -68,7 +54,6 @@ const ImportedRulePage = ({
   const [paths, setPaths] = useState([]);
   const [altPaths, setAltPaths] = useState([]);
   const [showDropdown, setShowDropDown] = useState(0);
-  const [ogEntries, setOgEntries] = useState(0);
   const [componentsArray, setComponentsArray] = useState([])
 
   const [useFunction, setUseFunction] = useState(false);
@@ -77,15 +62,21 @@ const ImportedRulePage = ({
   const ref = React.useRef();
   let tempIndex = 0;
 
-  const forceUpdate = useForceUpdate();
   let ruleNames = location.state.ruleNames;
 
   useEffect(() => {
     let tempRule = _.cloneDeep(newRule);
     let jsonStruct = location.state.jsonStructure;
+    console.log(jsonStruct)
+
 
     jsonStruct.map((string) => {
-      _.set(tempRule, string, "");
+      if(parseInt(signal) === 1){
+        _.set(tempRule, string, "");
+      }else if(parseInt(signal) === 2){
+        _.set(tempRule, string, _.get(jsonText, string));
+      }
+      
     });
 
     setRuleTitle(Object.keys(tempRule)[0]);
@@ -93,7 +84,6 @@ const ImportedRulePage = ({
       setNewRule(tempRule);
     }
     
-    setOgEntries(Object.entries(tempRule[Object.keys(tempRule)[0]]).length);
   }, []);
 
   useEffect(() => {
@@ -347,6 +337,8 @@ const ImportedRulePage = ({
                 setFields={setFields}
                 setTempNewRule={setTempNewRule}
                 goForRules={goForRules}
+                signal={parseInt(signal)}
+                jsonText={jsonText}
               />)
           }
         }
@@ -368,6 +360,8 @@ const ImportedRulePage = ({
                 setFields={setFields}
                 setTempNewRule={setTempNewRule}
                 goForRules={goForRules}
+                signal={parseInt(signal)}
+                jsonText={jsonText}
               />)
           }
         }
@@ -389,6 +383,8 @@ const ImportedRulePage = ({
                 setFields={setFields}
                 setTempNewRule={setTempNewRule}
                 goForRules={goForRules}
+                signal={parseInt(signal)}
+                jsonText={jsonText}
               />)
           }
         }
@@ -410,6 +406,8 @@ const ImportedRulePage = ({
                 setFields={setFields}
                 setTempNewRule={setTempNewRule}
                 goForRules={goForRules}
+                signal={parseInt(signal)}
+                jsonText={jsonText}
               />)
           }
 
@@ -569,6 +567,7 @@ const ImportedRulePage = ({
               handleStoreRule={handleStoreRule}
               ruleNames={ruleNames}
               handleDownloadRule={handleDownloadRule}
+              setUseFunction={setUseFunction}
             />
           ) : ruleUpdatePopup == 2 ? (
             <RuleUpdateConfirmationPopup
@@ -580,6 +579,7 @@ const ImportedRulePage = ({
               newRule={clean(newRule)}
               handleStoreRule={handleStoreRule}
               handleDownloadRule={handleDownloadRule}
+              setUseFunction={setUseFunction}
             />
           ) : (
             <></>

@@ -128,7 +128,7 @@ function App() {
                                               multipleFileOutput={multipleFileOutput} setMultipleFileOutput={setMultipleFileOutput} 
                                               files={files} firstRender={firstRender} setFirstRender={setFirstRender}/>} />
             <Route path="/generator" element={<Generator ruleCount={ruleCount} ruleNames={ruleNames} rules={rules} rulesLoaded={rulesLoaded}/>} />
-            <Route path="/generator/generate-rule" element={<NewRulePage newRule={newRule} setNewRule={setNewRule}/>} />
+            <Route path="/generator/generate-rule" element={<NewRulePage newRule={newRule} setNewRule={setNewRule} setCounter={setCounter} counter={counter}/>} />
             <Route path="/generator/generate-rule/imported" element={<ImportedRulePage rules={rules} newRule={newRule} setNewRule={setNewRule} counter={counter} setCounter={setCounter} ruleSignal={ruleSignal} setRuleSignal={setRuleSignal}/>} />
           </Routes>
         </BrowserRouter>

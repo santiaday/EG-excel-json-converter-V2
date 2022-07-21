@@ -14,9 +14,11 @@ import StringArrayElement from "./StringArrayElement";
 import FieldComponent from "./FieldComponent"
 import StringElement from "./StringElement";
 import IntegerComponent from "./IntegerComponent";
+import { MdExpandMore  } from "react-icons/md"
+import "./styles.css"
 
 
-const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentString, pathArrayIndex, parentString, inArray, paths, importField, goForRules, tempNewRule, arrayIndex, parentFields, setParentFields, arrayName}) => {
+const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentString, pathArrayIndex, parentString, inArray, paths, importField, goForRules, tempNewRule, arrayIndex, parentFields, setParentFields, arrayName, signal, jsonText}) => {
 
 
   const ref = useRef()
@@ -34,6 +36,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
   const [hovering, setHovering] = useState(false)
   const [deleted, setDeleted] = useState(false)
   const [color, setColor] = useState("")
+  const [collapsed, setCollapsed] = useState(false)
   
 
   const handleShowSign = () => {
@@ -123,6 +126,17 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
           
       }
 
+  }
+
+
+  const handleExpandContainers = () => {
+    if(collapsed){
+      setCollapsed(false)
+    }else{
+      setCollapsed(true)
+    }
+
+    document.getElementById("containerExpanded").classList.add("containerCollapsed").remove("containerExpanded")
   }
 
   const handleAddField = (fieldType, level, importSignal) => {
@@ -278,6 +292,8 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
                   setNewRule={setNewRule}
                   setFields={setFields}
                   goForRules={goForRules}
+                  signal={signal}
+                  jsonText={jsonText}
                 />)
             }
           }
@@ -298,6 +314,8 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
                   setNewRule={setNewRule}
                   setFields={setFields}
                   goForRules={goForRules}
+                  signal={signal}
+                  jsonText={jsonText}
                 />)
             }
           }
@@ -318,6 +336,8 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
                   setNewRule={setNewRule}
                   setFields={setFields}
                   goForRules={goForRules}
+                  signal={signal}
+                  jsonText={jsonText}
                 />)
             }
           }
@@ -338,6 +358,8 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
                   setNewRule={setNewRule}
                   setFields={setFields}
                   goForRules={goForRules}
+                  signal={signal}
+                  jsonText={jsonText}
                 />)
             }
   
@@ -370,6 +392,9 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
   return (
     <>
     {!deleted ? <>
+      <span style={{position: "absolute" ,transform: "translateY(10px)", marginLeft:  `calc(${marginLeft}px)`, cursor: "pointer"}}>
+        <MdExpandMore id="containerExpanded" onClick={() => setCollapsed(!collapsed)} className={collapsed ? "containerCollapsed" : "containerExpanded" } />
+      </span>
     <Typography
       variant="h6"
       style={{ marginBottom: "10px", marginLeft: `calc(${marginLeft}px + 20px)` }}
@@ -402,6 +427,9 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
       }
       <span style={{fontSize: "1.5rem",color: `${color}`, fontWeight: "600"}}>{" : {"}</span>
     </Typography>
+
+    {!collapsed ? 
+    <>
     <>
     {componentsArray}
     </>
@@ -410,6 +438,7 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
 
     {showDropdown && entered ? 
                 <>
+
             <TextField
                 ref={ref}
                 onChange={(e) => handleAddField(e.target.value, ref.current.style.marginLeft) }
@@ -462,10 +491,14 @@ const NestedObjectComponent = ({ newRule, marginLeft, setNewRule, setParentStrin
 
 
             }
+            </> : <></>}
     <Typography
       variant="h6"
-      style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }}
-    >
+      style={{ marginBottom: "10px", marginLeft: `${marginLeft}` + "px" }} >
+        
+        
+
+        
       <span style={{fontSize: "1.5rem" , color: `${color}`, fontWeight: "600"}}>{" }"}</span>
     </Typography>
     
